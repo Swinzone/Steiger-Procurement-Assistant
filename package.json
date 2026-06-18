@@ -1,0 +1,10 @@
+{
+  "name": "steiger-procurement-assistant",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Steiger Dynamics Procurement Assistant",
+  "engines": {
+    "node": ">=18.x"
+  }
+}

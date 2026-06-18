@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steiger Procurement Assistant</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f4f2;color:#1a1a1a;font-size:14px;line-height:1.5;min-height:100vh}
+.hdr{background:#fff;border-bottom:1px solid #d8d8d4;padding:16px 24px;display:flex;align-items:baseline;gap:16px}
+.hdr-t{font-size:15px;font-weight:500}
+.hdr-s{font-size:12px;color:#888}
+.tabs{background:#fff;border-bottom:1px solid #d8d8d4;padding:0 24px;display:flex;overflow-x:auto}
+.tab{padding:10px 18px;font-size:13px;color:#666;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;margin-bottom:-1px;font-family:inherit}
+.tab:hover{color:#1a1a1a}
+.tab.on{color:#1a1a1a;font-weight:500;border-bottom-color:#1a1a1a}
+.wrap{padding:24px 24px 90px;max-width:900px}
+.pnl{display:none}
+.pnl.on{display:block}
+.lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:6px}
+.card{background:#fff;border:1px solid #d8d8d4;border-radius:6px;padding:20px;margin-bottom:16px}
+.ct{font-size:14px;font-weight:500;margin-bottom:4px}
+.cd{font-size:12px;color:#666;margin-bottom:16px;line-height:1.5}
+label{display:block;font-size:12px;font-weight:500;color:#444;margin-bottom:5px}
+input,textarea,select{width:100%;padding:8px 10px;border:1px solid #d8d8d4;border-radius:4px;font-size:13px;font-family:inherit;color:#1a1a1a;background:#fff;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#999}
+textarea{resize:vertical}
+.f{margin-bottom:14px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.btn{padding:9px 18px;border-radius:4px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:inherit}
+.bp{background:#1a1a1a;color:#fff}
+.bp:hover{background:#333}
+.bp:disabled{background:#999;cursor:not-allowed}
+.bg{background:none;color:#444;border:1px solid #d8d8d4}
+.bg:hover{background:#f4f4f2}
+.br{display:flex;gap:10px;margin-top:16px;align-items:center}
+.out{display:none;background:#fff;border:1px solid #d8d8d4;border-radius:6px;padding:20px;margin-top:16px}
+.out.on{display:block}
+.ol{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e8e8e4;display:flex;justify-content:space-between}
+.ob{font-size:13px;line-height:1.75;color:#2a2a2a;white-space:pre-wrap}
+.pt{width:100%;border-collapse:collapse;font-size:13px}
+.pt th{text-align:left;padding:8px 12px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:#888;border-bottom:1px solid #d8d8d4}
+.pt td{padding:10px 12px;border-bottom:1px solid #ebebeb;vertical-align:middle}
+.pt tr:last-child td{border-bottom:none}
+.pt tr:hover td{background:#f9f9f8}
+.cp{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px;background:#f0f0ee;color:#555}
+.rd{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px}
+.rc{background:#c0392b}.rh{background:#d35400}.rm{background:#b7950b}.rl{background:#27ae60}
+.bp2{color:#1a7a3e;font-weight:500}
+.st{font-size:11px;color:#1a7a3e}
+.rr{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:12px}
+.rc2{background:#f9f9f8;border:1px solid #e8e8e4;border-radius:4px;padding:8px 10px;font-size:12px}
+.rn{color:#888;font-size:11px;margin-bottom:3px}
+.rp{font-weight:500;color:#1a1a1a}
+.rp.b{color:#1a7a3e}
+.rl2{font-size:10px;color:#2878c8;text-decoration:none;display:block;margin-top:3px}
+.rl2:hover{text-decoration:underline}
+.eb{font-size:11px;color:#888;background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;font-family:inherit}
+.es{display:none;padding:12px 12px 4px;background:#f9f9f8;border-top:1px solid #ebebeb}
+.es.on{display:block}
+.lt{width:100%;border-collapse:collapse;font-size:13px}
+.lt th{padding:7px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#888;border-bottom:1px solid #d8d8d4;text-align:left}
+.lt td{padding:9px 10px;border-bottom:1px solid #ebebeb}
+.lt tr:last-child td{border-bottom:none}
+.pp{color:#c0392b;font-weight:500}.pn{color:#1a7a3e;font-weight:500}
+.db{background:none;border:none;cursor:pointer;color:#aaa;font-size:15px;padding:0;font-family:inherit}
+.db:hover{color:#c0392b}
+.as{padding:10px 14px;border-radius:4px;font-size:13px;margin-bottom:12px;border-left:3px solid}
+.ar{background:#fdf3f2;border-color:#c0392b;color:#7a2424}
+.aa{background:#fdf8ee;border-color:#b7950b;color:#7a5f08}
+.ag{background:#f0faf4;border-color:#27ae60;color:#1a6038}
+.ab{background:#f0f6fd;border-color:#2878c8;color:#1a4a80}
+.at{font-weight:500;margin-bottom:2px}
+.ad{font-size:12px}
+.sr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sb{background:#fff;border:1px solid #d8d8d4;border-radius:6px;padding:14px 16px}
+.sv{font-size:22px;font-weight:500;margin-bottom:2px}
+.sl{font-size:11px;color:#888}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cc{background:#fff;border:1px solid #d8d8d4;border-radius:6px;padding:16px}
+.cn{font-size:14px;font-weight:500;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.cs{font-size:10px;font-weight:500;padding:2px 7px;border-radius:3px}
+.sa{background:#f0faf4;color:#1a6038;border:1px solid #27ae60}
+.sw{background:#fdf8ee;color:#7a5f08;border:1px solid #b7950b}
+.cb{font-size:12px;color:#555;line-height:1.6;margin-bottom:10px}
+.ca{font-size:12px;color:#2a2a2a;background:#f4f4f2;padding:8px 10px;border-radius:4px;border-left:2px solid #999}
+.sut{width:100%;border-collapse:collapse;font-size:13px}
+.sut th{padding:8px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#888;border-bottom:1px solid #d8d8d4;text-align:left}
+.sut td{padding:10px 10px;border-bottom:1px solid #ebebeb;font-size:12px;vertical-align:top}
+.qn{color:#1a7a3e;font-weight:500}.qs{color:#b7950b;font-weight:500}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+.div{border:none;border-top:1px solid #e8e8e4;margin:20px 0}
+.cpb{font-size:11px;color:#888;background:none;border:none;cursor:pointer;padding:0;font-family:inherit}.dlb{font-size:11px;color:#2878c8;background:none;border:none;cursor:pointer;padding:0;font-family:inherit;margin-left:10px}.dlb:hover{text-decoration:underline}
+.ne{text-align:center;color:#aaa;padding:24px;font-size:13px}
+/* Persistent AI assistant */
+#ai-fab{position:fixed;bottom:20px;right:24px;background:#1a1a1a;color:#fff;border:none;border-radius:24px;padding:13px 22px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.25);z-index:200;font-family:inherit}
+#ai-fab:hover{background:#333}
+#ai-window{position:fixed;bottom:20px;right:24px;width:420px;max-width:calc(100vw - 48px);height:540px;max-height:calc(100vh - 90px);background:#fff;border:1px solid #d8d8d4;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,.2);z-index:201;display:none;flex-direction:column;overflow:hidden}
+#ai-window.on{display:flex}
+#ai-head{padding:12px 16px;border-bottom:1px solid #e8e8e4;display:flex;align-items:center;background:#fafafa}
+#ai-close{margin-left:auto;font-size:12px;color:#888;background:none;border:none;cursor:pointer;font-family:inherit}
+#ai-close:hover{color:#1a1a1a}
+#ai-quick{padding:10px 12px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid #f0f0ee}
+.aqb{font-size:11px;padding:5px 10px;border:1px solid #d8d8d4;background:#fff;border-radius:14px;cursor:pointer;color:#444;font-family:inherit;white-space:nowrap}
+.aqb:hover{background:#f4f4f2;border-color:#bbb}
+#cm{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ai-av{width:26px;height:26px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px}
+.ai-uav{width:26px;height:26px;border-radius:50%;background:#e0e0dc;color:#555;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px}
+.ai-bub{background:#f4f4f2;border-radius:4px 10px 10px 10px;padding:9px 13px;font-size:13px;line-height:1.6;max-width:85%;white-space:pre-wrap}
+.ai-ubub{background:#f0f6fd;border-radius:10px 4px 10px 10px;padding:9px 13px;font-size:13px;line-height:1.6;max-width:85%;white-space:pre-wrap}
+#ai-input-row{border-top:1px solid #e8e8e4;padding:12px;display:flex;gap:8px}
+#ai-input-row textarea{flex:1;height:42px;resize:none;border:1px solid #d8d8d4;border-radius:4px;padding:9px 12px;font-size:13px;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <span class="hdr-t">Steiger Dynamics Procurement Assistant</span>
+  <span class="hdr-s">Redwood City, CA &nbsp;&middot;&nbsp; June 2026</span>
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="go('dash')">Overview</button>
+  <button class="tab" onclick="go('track')">Price Tracker</button>
+  <button class="tab" onclick="go('rfp')">RFP Builder</button>
+  <button class="tab" onclick="go('intel')">Supplier Intel</button>
+  <button class="tab" onclick="go('comp')">Competitor Watch</button>
+  <button class="tab" onclick="go('log')">Price Log</button>
+  <button class="tab" onclick="go('cr')">Contract Review</button>
+  <button class="tab" onclick="go('ca')">Cost Analysis</button>
+</div>
+<div class="wrap">
+
+<!- OVERVIEW ->
+<div id="p-dash" class="pnl on">
+  <div class="sr">
+    <div class="sb"><div class="sv">25</div><div class="sl">Components tracked</div></div>
+    <div class="sb"><div class="sv" style="color:#c0392b">3</div><div class="sl">Critical supply risks</div></div>
+    <div class="sb"><div class="sv" style="color:#1a7a3e">4</div><div class="sl">Negotiation windows open</div></div>
+    <div class="sb"><div class="sv" id="d-sav">$0</div><div class="sl">Savings logged this month</div></div>
+  </div>
+  <div class="lbl">Active alerts</div>
+  <div class="as ar"><div class="at">RTX 5090 and 5080 supply constrained</div><div class="ad">NVIDIA cutting RTX 5000 production 30 to 40% H1 2026 (GDDR7 shortage). Pull orders forward. Request written Q3 allocation from NVIDIA partner rep this week.</div></div>
+  <div class="as aa"><div class="at">DDR5 prices rising 15 to 40% year over year</div><div class="ad">AI and HBM demand pulling DRAM capacity. Lock SPA pricing with G.Skill or Kingston before next adjustment. Window is 2-3 weeks.</div></div>
+  <div class="as ag"><div class="at">AMD fiscal quarter-end around June 30 negotiate now</div><div class="ad">AMD, ASUS, G.Skill, Kingston, and Corsair all close their fiscal quarter late June. Best negotiation window of the quarter.</div></div>
+  <div class="as ab"><div class="at">Competitor signal: CyberPowerPC cutting AMD Ryzen line</div><div class="ad">CyberPowerPC removed AMD Ryzen configurations this month. AMD and TD SYNNEX have volume to fill. Call your AMD rep this week.</div></div>
+  <div class="as ag"><div class="at">NVMe Gen4 SSDs spot buy opportunity</div><div class="ad">Samsung 990 Pro 2TB at $89-99 vs $119 standard. Category oversupplied. Buy 45-60 day buffer now.</div></div>
+  <hr class="div">
+  <div class="lbl">Steiger prebuilt systems</div>
+  <div style="font-size:12px;color:#666;margin-bottom:10px">Sell price is what Steiger charges. Component cost is the estimated total to source the parts at best available prices (June 2026 estimates). Click any system to see the component breakdown.</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="pt">
+      <thead><tr><th style="padding-left:16px">System</th><th>Configuration</th><th>Sell price</th><th>Est. component cost</th><th></th></tr></thead>
+      <tbody id="prebuilt-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!- PRICE TRACKER ->
+<div id="p-track" class="pnl">
+  <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+    <div style="padding:12px 16px;border-bottom:1px solid #e8e8e4;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <input type="text" id="ts" placeholder="Search components..." style="width:200px" oninput="rtrack()">
+      <select id="tc" onchange="rtrack()" style="width:150px">
+        <option value="">All categories</option>
+        <option>GPU</option><option>CPU</option><option>Motherboard</option>
+        <option>RAM</option><option>Storage</option><option>Cooling</option>
+        <option>PSU</option><option>Case</option>
+      </select>
+      <button class="btn bp" id="sab" onclick="sall()">Search all prices with AI</button>
+      <span id="tsp" style="display:none;font-size:12px;color:#888">Searching...</span>
+    </div>
+    <div id="auto-note" style="display:none;font-size:12px;color:#1a7a3e;padding:8px 16px;background:#f0faf4;border-bottom:1px solid #d8e8d4">Searching live prices on load...</div>
+    <table class="pt">
+      <thead><tr>
+        <th style="padding-left:16px">Component</th><th>Category</th><th>My price</th>
+        <th>Market low</th><th>Savings</th><th>Trend</th><th>Risk</th><th></th>
+      </tr></thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+  <div id="tai" class="out"><div class="ol">AI price search <button class="cpb" onclick="cp('tab')">Copy</button><button class="dlb" onclick="dl('tab','AI price search')">Download</button></div><div class="ob" id="tab"></div></div>
+</div>
+
+<!- PRICE LOG ->
+<div id="p-log" class="pnl">
+  <div class="card" style="margin-bottom:16px">
+    <div class="ct">Standard prices</div>
+    <div class="cd" style="margin-bottom:10px">Your budgeted price per component. PPV is calculated against these. Update when you negotiate a new rate or market shifts.</div>
+    <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center">
+      <select id="sp-comp" style="flex:1">
+        <option value="">Select component to update standard price...</option>
+      </select>
+      <input type="number" id="sp-price" placeholder="New std price $" style="width:140px">
+      <button class="btn bp" style="white-space:nowrap" onclick="updateStd()">Update price</button>
+    </div>
+    <div id="sp-confirm" style="font-size:12px;color:#1a7a3e;display:none">Standard price updated.</div>
+  </div>
+  <div class="card">
+    <div class="ct">Log a purchase</div>
+    <div class="cd">Every entry calculates PPV automatically. Your log persists in this browser.</div>
+    <div class="fr">
+      <div class="f"><label>Component</label><select id="lc"><option value="">Select...</option></select></div>
+      <div class="f"><label>Supplier / source</label><input type="text" id="ls" placeholder="e.g. TD SYNNEX, Newegg, direct..."></div>
+    </div>
+    <div class="fr">
+      <div class="f"><label>Unit price paid ($)</label><input type="number" id="lp" placeholder="0.00"></div>
+      <div class="f"><label>Quantity</label><input type="number" id="lq" value="1" min="1"></div>
+      <div class="f"><label>Date</label><input type="text" id="ld"></div>
+    </div>
+    <div class="f"><label>Notes (optional)</label><input type="text" id="ln" placeholder="e.g. SPA rate, negotiated, spot buy..."></div>
+    <div class="br">
+      <button class="btn bp" onclick="addLog()">Add entry</button>
+      <button class="btn bg" onclick="expLog()">Export CSV</button>
+      <button class="btn bg" id="alb" onclick="anaLog()">Analyze with AI</button>
+    </div>
+  </div>
+  <div class="fr">
+    <div class="card" style="margin-bottom:0"><div class="lbl">PPV summary</div><div id="ppvs" style="font-size:13px;color:#555">No entries yet.</div></div>
+    <div class="card" style="margin-bottom:0"><div class="lbl">Log stats</div><div id="lstt" style="font-size:13px;color:#555">0 entries.</div></div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;margin-top:16px">
+    <table class="lt">
+      <thead><tr><th>Date</th><th>Component</th><th>Supplier</th><th>Qty</th><th>Paid</th><th>Total</th><th>Std</th><th>PPV</th><th>Notes</th><th></th></tr></thead>
+      <tbody id="ltb"><tr><td colspan="10" class="ne">No entries yet.</td></tr></tbody>
+    </table>
+  </div>
+  <div id="lai" class="out" style="margin-top:16px"><div class="ol">AI log analysis <button class="cpb" onclick="cp('lab')">Copy</button><button class="dlb" onclick="dl('lab','AI log analysis')">Download</button></div><div class="ob" id="lab"></div></div>
+</div>
+
+<!- CONTRACT REVIEW ->
+<div id="p-cr" class="pnl">
+  <div class="card">
+    <div class="ct">Contract review</div>
+    <div class="cd">Paste contract clauses. The AI will explain terms in plain language, flag risks, and suggest improvements aligned to Steiger's standard requirements.</div>
+    <div class="f"><label>Contract clauses to review</label><textarea id="crcl" rows="6" placeholder="Paste contract language here: payment terms, liability clauses, termination rights, auto-renewal, price escalation caps..."></textarea></div>
+    <div class="fr">
+      <div class="f"><label>Supplier</label><input type="text" id="crv" placeholder="e.g. G.Skill, Kingston, ASUS..."></div>
+      <div class="f"><label>Product or service</label><input type="text" id="crp" placeholder="e.g. DDR5 RAM annual supply agreement"></div>
+    </div>
+    <div class="f"><label>Your requirements</label><textarea id="crr" rows="3">Net 60 payment terms, no auto-renewal clause, 90-day advance notice of price increases, right to terminate for convenience with 30 days notice, price increases capped at 3% annually</textarea></div>
+    <div class="br">
+      <button class="btn bp" id="crb" onclick="doCR()">Review contract</button>
+      <span id="crsp" style="display:none;font-size:12px;color:#888">Reviewing...</span>
+    </div>
+  </div>
+  <div id="cro" class="out"><div class="ol">Contract review <button class="cpb" onclick="cp('crb2')">Copy</button><button class="dlb" onclick="dl('crb2','Contract review')">Download</button></div><div class="ob" id="crb2"></div></div>
+</div>
+
+<!- RFP BUILDER ->
+<div id="p-rfp" class="pnl">
+  <div class="card">
+    <div class="ct">RFP and specification builder</div>
+    <div class="cd">Describe what you need to source. The AI will draft technical specifications, evaluation criteria, and a complete RFP document you can send to suppliers.</div>
+    <div class="fr">
+      <div class="f"><label>What are you sourcing?</label><input type="text" id="rfpp" placeholder="e.g. 360mm AIO coolers, DDR5-6000 RAM kits..."></div>
+      <div class="f"><label>Estimated annual volume</label><input type="text" id="rfpv" placeholder="e.g. 200 units/year, 50 units/quarter..."></div>
+    </div>
+    <div class="f"><label>Purpose and requirements</label><textarea id="rfpu" rows="3" placeholder="What will this be used for? Non-negotiable requirements? e.g. must be quiet under 25 dB, must support AM5 socket, 5-year warranty required..."></textarea></div>
+    <div class="fr">
+      <div class="f"><label>What matters most when evaluating suppliers?</label><input type="text" id="rfppr" placeholder="e.g. price, reliability, lead time, warranty..."></div>
+      <div class="f"><label>Suppliers to send this to (optional)</label><input type="text" id="rfps" placeholder="e.g. Arctic, Scythe, Alphacool, Corsair..."></div>
+    </div>
+    <div class="br">
+      <button class="btn bp" id="rfpb" onclick="doRFP()">Build RFP</button>
+      <span id="rfpsp" style="display:none;font-size:12px;color:#888">Building...</span>
+    </div>
+  </div>
+  <div id="rfpo" class="out"><div class="ol">RFP document <button class="cpb" onclick="cp('rfpb2')">Copy</button><button class="dlb" onclick="dl('rfpb2','RFP document')">Download</button></div><div class="ob" id="rfpb2"></div></div>
+</div>
+
+<!- COST ANALYSIS ->
+<div id="p-ca" class="pnl">
+  <div class="card">
+    <div class="ct">Cost and quote analysis</div>
+    <div class="cd">Paste a supplier quote. The AI will identify where you have negotiation room, flag suspicious line items, and suggest a reduction strategy with specific questions to ask.</div>
+    <div class="f"><label>Paste the supplier quote or cost breakdown</label><textarea id="caq" rows="6" placeholder="Paste the quote here: line items, quantities, unit prices, totals, any fees or surcharges..."></textarea></div>
+    <div class="fr">
+      <div class="f"><label>Supplier</label><input type="text" id="cas" placeholder="e.g. G.Skill, TD SYNNEX..."></div>
+      <div class="f"><label>Target cost reduction</label><input type="text" id="cat" placeholder="e.g. 8%, 10-15%..."></div>
+    </div>
+    <div class="f"><label>Context (optional)</label><input type="text" id="cac" placeholder="e.g. first quote from new vendor, renewal negotiation, competitor quote at $X..."></div>
+    <div class="br">
+      <button class="btn bp" id="cab" onclick="doCA()">Analyze quote</button>
+      <span id="casp" style="display:none;font-size:12px;color:#888">Analyzing...</span>
+    </div>
+  </div>
+  <div id="cao" class="out"><div class="ol">Cost analysis <button class="cpb" onclick="cp('cab2')">Copy</button><button class="dlb" onclick="dl('cab2','Cost analysis')">Download</button></div><div class="ob" id="cab2"></div></div>
+</div>
+
+<!- COMPETITOR WATCH ->
+<div id="p-comp" class="pnl">
+  <div class="card" style="margin-bottom:16px">
+    <div class="ct">How competitor signals create negotiation leverage</div>
+    <div class="cd" style="margin-bottom:0">When a large buyer reduces orders, the supplier has excess inventory and unmet volume targets and will negotiate. Monitor these competitors for product line changes and business contractions. When you see a signal, call the shared supplier rep the same day.</div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
+    <button class="btn bp" id="cob" onclick="doComp()">Scan for live signals with AI</button>
+    <span id="cosp" style="display:none;font-size:12px;color:#888">Scanning...</span>
+  </div>
+  <div class="cg">
+    <div class="cc"><div class="cn">CyberPowerPC <span class="cs sa">Active signal</span></div><div class="cb">Removed multiple AMD Ryzen configurations from their online builder this month. AMD and TD SYNNEX now have CPU volume to fill.</div><div class="ca">Call AMD or TD SYNNEX rep this week. Lead with: "We're looking to expand our Ryzen commitment next quarter: what can you do on pricing for a quarterly volume commitment?"</div></div>
+    <div class="cc"><div class="cn">iBUYPOWER <span class="cs sw">Watch</span></div><div class="cb">One of the largest GPU buyers in US direct PC market. If they pull back from any RTX tier, ASUS and MSI have excess AIB allocation.</div><div class="ca">Monitor iBUYPOWER.com weekly. If an RTX option disappears, call ASUS or MSI the same day.</div></div>
+    <div class="cc"><div class="cn">Puget Systems <span class="cs sw">Watch</span></div><div class="cb">Direct overlap with Steiger's AI Station line. Major Threadripper buyer. If Puget contracts, AMD has TRX50 and WRX90 CPU allocation to place.</div><div class="ca">Monitor Puget's blog and product pages. If their Threadripper line shrinks, contact AMD about workstation CPU SPA pricing.</div></div>
+    <div class="cc"><div class="cn">Maingear <span class="cs sw">Watch</span></div><div class="cb">Most similar to Steiger in positioning. Same suppliers: ASUS, G.Skill, Fractal, Corsair, Samsung. If Maingear exits a category, that's shared allocation freed up.</div><div class="ca">Monitor Maingear.com catalog monthly for configuration removals or category exits.</div></div>
+    <div class="cc"><div class="cn">NZXT BLD <span class="cs sw">Watch</span></div><div class="cb">Major Corsair PSU buyer. If NZXT BLD contracts, Corsair has PSU supply to place. Corsair also supplies Steiger.</div><div class="ca">If NZXT BLD reduces Corsair options, call Corsair rep about PSU pricing and bundle deal with cooling.</div></div>
+    <div class="cc"><div class="cn">Origin PC (HP) <span class="cs sw">Watch</span></div><div class="cb">HP-owned, targets enterprise and creator workstation market overlapping with Steiger. Large Intel and NVIDIA buyer. HP quarterly earnings signal cuts.</div><div class="ca">Read HP quarterly earnings. If PC segment revenue drops, contact Intel and NVIDIA reps about workstation allocation.</div></div>
+  </div>
+  <div id="coo" class="out" style="margin-top:16px"><div class="ol">Live competitor intelligence <button class="cpb" onclick="cp('cob2')">Copy</button><button class="dlb" onclick="dl('cob2','Live competitor intelligence')">Download</button></div><div class="ob" id="cob2"></div></div>
+</div>
+
+<!- SUPPLIER INTEL ->
+<div id="p-intel" class="pnl">
+  <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+    <div style="padding:14px 16px;font-size:13px;font-weight:500;border-bottom:1px solid #e8e8e4">Fiscal calendar</div>
+    <div style="padding:10px 16px;font-size:12px;color:#666;border-bottom:1px solid #e8e8e4">When each supplier's fiscal quarter closes. Reps are typically under the most quota pressure in the final weeks of their quarter.</div>
+    <table class="sut">
+      <thead><tr><th>Supplier</th><th>Category</th><th>Quarter closes</th><th>Status as of June 2026</th></tr></thead>
+      <tbody>
+        <tr><td><strong>AMD</strong></td><td>CPU</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>ASUS / ASRock</strong></td><td>Motherboard, GPU AIB</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>G.Skill</strong></td><td>RAM</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>Kingston</strong></td><td>RAM, Storage</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>Corsair</strong></td><td>PSU, Cooling</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>Arctic / Scythe</strong></td><td>Cooling</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>Samsung / WD</strong></td><td>Storage</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>Fractal / Phanteks</strong></td><td>Case</td><td>Mar / Jun / Sep / Dec</td><td class="qn">Quarter closing now</td></tr>
+        <tr><td><strong>NVIDIA</strong></td><td>GPU</td><td>Jan / Apr / Jul / Oct</td><td>Next close: late July</td></tr>
+        <tr><td><strong>TD SYNNEX</strong></td><td>Distributor</td><td>Feb / May / Aug / Nov</td><td>Next close: late August</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:14px 16px;font-size:13px;font-weight:500;border-bottom:1px solid #e8e8e4">Market conditions</div>
+    <div style="padding:10px 16px;font-size:12px;color:#666;border-bottom:1px solid #e8e8e4">Observed supply and pricing conditions by component category. Factual notes, not recommendations.</div>
+    <table class="sut">
+      <thead><tr><th>Component / Category</th><th>Condition</th><th>Source</th><th>Date noted</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RTX 5000 series GPUs</strong></td><td>Production cut 30 to 40%, GDDR7 VRAM shortage</td><td>NVIDIA Q1 FY2027 earnings</td><td>May 2026</td></tr>
+        <tr><td><strong>DDR5-6000 memory</strong></td><td>Prices rising 15 to 40% year over year, AI and HBM demand pulling DRAM capacity</td><td>DRAMeXchange</td><td>Q2 2026</td></tr>
+        <tr><td><strong>NVMe Gen4 2TB SSDs</strong></td><td>Oversupplied, prices falling. Samsung 990 Pro 2TB at $89 to $99 vs $119 standard</td><td>StorageReview, Newegg pricing</td><td>June 2026</td></tr>
+        <tr><td><strong>NVMe Gen5 SSDs</strong></td><td>Maturing, prices declining as supply increases</td><td>StorageReview</td><td>June 2026</td></tr>
+        <tr><td><strong>AMD Ryzen 9000 X3D</strong></td><td>Stable pricing, good availability</td><td>PCPartPicker</td><td>June 2026</td></tr>
+        <tr><td><strong>Intel Core Ultra 200S</strong></td><td>Prices declining, good availability</td><td>PCPartPicker, Newegg</td><td>June 2026</td></tr>
+        <tr><td><strong>Electronics (broad)</strong></td><td>Tariff pressure expected H2 2026, 10 to 20% potential cost increases</td><td>Consumer Technology Association</td><td>2026</td></tr>
+        <tr><td><strong>RTX 6000 series</strong></td><td>Next generation roadmap expected late 2026 to early 2027</td><td>Industry reporting</td><td>2026</td></tr>
+        <tr><td><strong>Air and AIO cooling</strong></td><td>Stable pricing and availability across Arctic, Scythe, Corsair</td><td>PCPartPicker</td><td>June 2026</td></tr>
+        <tr><td><strong>ATX cases</strong></td><td>Stable, low supply risk across Fractal and Phanteks</td><td>PCPartPicker</td><td>June 2026</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<!- PERSISTENT AI ASSISTANT (always visible) ->
+<div id="ai-window">
+  <div id="ai-head">
+    <span style="font-size:13px;font-weight:500">AI Assistant</span>
+    <span style="font-size:11px;color:#888;margin-left:8px">Ask anything about this tool, pricing, suppliers, or procurement</span>
+    <button id="ai-close" onclick="toggleAI(false)">Close</button>
+  </div>
+  <div id="ai-quick">
+    <button class="aqb" onclick="qa('What should I act on this week given current market conditions?')">This week's priorities</button>
+    <button class="aqb" onclick="qa('Which components are cheapest to buy right now and where?')">Cheapest right now</button>
+    <button class="aqb" onclick="qa('If RTX 5090 cost rises $200, what happens to the Creator Prime Ryzen margin and what price should I recommend?')">Margin impact</button>
+    <button class="aqb" onclick="qa('Research a supplier for me. Ask me which one.')">Research a supplier</button>
+    <button class="aqb" onclick="qa('Build me a 30-day procurement plan for a new buyer at Steiger.')">30-day plan</button>
+  </div>
+  <div id="cm">
+    <div style="display:flex;gap:10px">
+      <div class="ai-av">AI</div>
+      <div class="ai-bub">Ask me anything about this tool, current pricing, suppliers, negotiations, or what to act on today. I have full context on Steiger's product line and current market conditions.</div>
+    </div>
+  </div>
+  <div id="ai-input-row">
+    <textarea id="ci" placeholder="Ask about pricing, suppliers, market conditions, or how to use this tool..." onkeydown="ck(event)"></textarea>
+    <button class="btn bp" id="csb" onclick="sc()">Send</button>
+  </div>
+</div>
+<button id="ai-fab" onclick="toggleAI(true)">
+  <span style="font-size:13px;font-weight:600">Ask AI Assistant</span>
+</button>
+
+<script>
+const CTX=`You are a procurement intelligence assistant for Steiger Dynamics, a quiet-computing custom PC builder in Redwood City, CA. Founded 2012, ~17 employees, direct NVIDIA partner. CEO: Martin Gossner (automotive quality background).
+
+REAL PREBUILT PRICES (steigerdynamics.com):
+Creator Prime Mini 9600X+5060Ti=$3,112 | Creator Prime Compact 9800X3D+5070=$3,434 | Creator Prime Mini 9800X3D+5070Ti=$3,733 | Creator Prime AMD 9800X3D+5080=$4,296 | Creator Prime Intel 285K+5090=$7,064 | Creator Prime Ryzen 9950X3D+5090=$7,726 | Infinitum 4U 9950X3D+5090=$8,094
+
+30 PARTNERS: ADATA XPG, Alphacool, AMD, Arctic, Asetek, ASRock, ASUS/ROG, Corsair, DisplayLink, EVGA, Fractal Design, G.Skill, Kingston/HyperX, Intel, JRiver, LG, Logitech, Microsoft, MSI, NVIDIA GeForce, Phanteks, Raijintek, Samsung, Scythe, Seagate, Swiftech, TeamGroup, Western Digital.
+
+MARKET (June 2026): RTX 5000 supply cut 30 to 40% (GDDR7 shortage). DDR5 up 15-40% YoY. NVMe Gen4 oversupplied ($89-99 spot). Tariff pressure H2 2026. AMD Ryzen stable. RTX 6000 roadmap late 2026.
+
+COMPETITOR SIGNALS: CyberPowerPC cutting AMD Ryzen line (negotiate with AMD NOW). iBUYPOWER GPU-heavy. Puget Systems Threadripper overlap. Maingear same niche.
+
+FISCAL Q-ENDS: AMD/ASUS/G.Skill/Kingston/Corsair=late June (OPEN NOW). NVIDIA=Oct. TD SYNNEX=Nov.
+
+USER BACKGROUND: Procurement specialist from ADI (Analog Devices) semiconductor supply chain. Ran weekly overbooking/underbooking distributor analysis. Owned all asset/inventory approvals. Deep understanding of supplier motivations from inside a supplier org.
+
+Be specific, concise, and actionable. Reference real components and real prices. No generic advice.`;
+
+const COMPS=[
+  {id:'rtx5090',n:'NVIDIA RTX 5090 32GB',cat:'GPU',mp:1999,risk:'critical',trend:'up 8%',ret:{Amazon:2099,Newegg:1999,'B&H':2049,'Micro Center':1999,'Best Buy':null,Walmart:null}},
+  {id:'rtx5080',n:'NVIDIA RTX 5080 16GB',cat:'GPU',mp:1199,risk:'high',trend:'up 5%',ret:{Amazon:1249,Newegg:1199,'B&H':1219,'Micro Center':1199,'Best Buy':1299,Walmart:null}},
+  {id:'rtx5070ti',n:'NVIDIA RTX 5070 Ti 16GB',cat:'GPU',mp:849,risk:'medium',trend:'flat',ret:{Amazon:879,Newegg:849,'B&H':869,'Micro Center':849,'Best Buy':899,Walmart:null}},
+  {id:'rtx5070',n:'NVIDIA RTX 5070 12GB',cat:'GPU',mp:699,risk:'medium',trend:'down 2%',ret:{Amazon:719,Newegg:699,'B&H':709,'Micro Center':699,'Best Buy':749,Walmart:699}},
+  {id:'rtx5060ti',n:'NVIDIA RTX 5060 Ti 16GB',cat:'GPU',mp:529,risk:'low',trend:'down 3%',ret:{Amazon:539,Newegg:529,'B&H':534,'Micro Center':529,'Best Buy':549,Walmart:529}},
+  {id:'r9x3d',n:'AMD Ryzen 9 9950X3D',cat:'CPU',mp:699,risk:'medium',trend:'down 4%',ret:{Amazon:699,Newegg:699,'B&H':699,'Micro Center':699,'Best Buy':null,Walmart:null}},
+  {id:'r7x3d',n:'AMD Ryzen 7 9800X3D',cat:'CPU',mp:449,risk:'low',trend:'down 5%',ret:{Amazon:449,Newegg:449,'B&H':449,'Micro Center':449,'Best Buy':449,Walmart:null}},
+  {id:'r5',n:'AMD Ryzen 5 9600X',cat:'CPU',mp:229,risk:'low',trend:'flat',ret:{Amazon:229,Newegg:219,'B&H':229,'Micro Center':219,'Best Buy':null,Walmart:null}},
+  {id:'i9',n:'Intel Core Ultra 9 285K',cat:'CPU',mp:549,risk:'low',trend:'down 6%',ret:{Amazon:519,Newegg:529,'B&H':539,'Micro Center':519,'Best Buy':null,Walmart:null}},
+  {id:'mb1',n:'ASUS ROG STRIX B650E-F (AM5)',cat:'Motherboard',mp:249,risk:'low',trend:'down 8%',ret:{Amazon:229,Newegg:239,'B&H':249,'Micro Center':239,'Best Buy':null,Walmart:null}},
+  {id:'mb2',n:'ASUS ProArt Z890-Creator (LGA1851)',cat:'Motherboard',mp:349,risk:'low',trend:'flat',ret:{Amazon:339,Newegg:349,'B&H':359,'Micro Center':349,'Best Buy':null,Walmart:null}},
+  {id:'mb3',n:'ASRock TRX50 WS (Threadripper)',cat:'Motherboard',mp:699,risk:'medium',trend:'flat',ret:{Amazon:699,Newegg:699,'B&H':null,'Micro Center':null,'Best Buy':null,Walmart:null}},
+  {id:'ram1',n:'G.Skill Trident Z5 32GB DDR5-6000',cat:'RAM',mp:79,risk:'low',trend:'up 5%',ret:{Amazon:79,Newegg:74,'B&H':79,'Micro Center':74,'Best Buy':null,Walmart:79}},
+  {id:'ram2',n:'G.Skill Trident Z5 64GB DDR5-6000',cat:'RAM',mp:138,risk:'medium',trend:'up 10%',ret:{Amazon:138,Newegg:129,'B&H':138,'Micro Center':132,'Best Buy':null,Walmart:null}},
+  {id:'ram3',n:'Kingston Fury Beast 64GB DDR5-6000',cat:'RAM',mp:132,risk:'medium',trend:'up 8%',ret:{Amazon:129,Newegg:132,'B&H':134,'Micro Center':129,'Best Buy':null,Walmart:129}},
+  {id:'ssd1',n:'Samsung 990 Pro 2TB NVMe Gen4',cat:'Storage',mp:119,risk:'low',trend:'down 15%',ret:{Amazon:99,Newegg:104,'B&H':109,'Micro Center':104,'Best Buy':119,Walmart:109}},
+  {id:'ssd2',n:'WD Black SN850X 2TB NVMe Gen4',cat:'Storage',mp:109,risk:'low',trend:'down 12%',ret:{Amazon:99,Newegg:104,'B&H':109,'Micro Center':99,'Best Buy':109,Walmart:99}},
+  {id:'cool1',n:'Arctic Liquid Freezer III 360 AIO',cat:'Cooling',mp:109,risk:'low',trend:'down 2%',ret:{Amazon:89,Newegg:94,'B&H':99,'Micro Center':89,'Best Buy':null,Walmart:null}},
+  {id:'cool2',n:'Arctic Liquid Freezer III 240 AIO',cat:'Cooling',mp:79,risk:'low',trend:'down 3%',ret:{Amazon:64,Newegg:69,'B&H':72,'Micro Center':64,'Best Buy':null,Walmart:null}},
+  {id:'cool3',n:'Scythe Mugen 6 ARGB Air Cooler',cat:'Cooling',mp:59,risk:'low',trend:'flat',ret:{Amazon:54,Newegg:56,'B&H':59,'Micro Center':null,'Best Buy':null,Walmart:null}},
+  {id:'psu1',n:'Corsair RM850x Platinum 850W',cat:'PSU',mp:129,risk:'low',trend:'down 8%',ret:{Amazon:109,Newegg:119,'B&H':129,'Micro Center':119,'Best Buy':null,Walmart:null}},
+  {id:'psu2',n:'Corsair HX1200 Platinum 1200W',cat:'PSU',mp:219,risk:'low',trend:'down 3%',ret:{Amazon:199,Newegg:209,'B&H':219,'Micro Center':204,'Best Buy':null,Walmart:null}},
+  {id:'case1',n:'Fractal Design Define 7 ATX',cat:'Case',mp:169,risk:'low',trend:'flat',ret:{Amazon:149,Newegg:159,'B&H':169,'Micro Center':159,'Best Buy':null,Walmart:null}},
+  {id:'case2',n:'Phanteks Eclipse P600S ATX',cat:'Case',mp:189,risk:'low',trend:'down 3%',ret:{Amazon:169,Newegg:179,'B&H':189,'Micro Center':null,'Best Buy':null,Walmart:null}},
+  {id:'os1',n:'Windows 11 Pro OEM',cat:'OS',mp:139,risk:'low',trend:'flat',ret:{Amazon:139,Newegg:139,'B&H':139,'Micro Center':139,'Best Buy':139,Walmart:139}},
+];
+const RC={critical:'#c0392b',high:'#d35400',medium:'#b7950b',low:'#27ae60'};
+
+// Steiger prebuilt systems with component breakdowns. Component costs are
+// best-price estimates pulled from the tracker data (June 2026).
+const PREBUILTS=[
+  {name:'Creator Prime Mini',config:'Ryzen 5 9600X + RTX 5060 Ti 16GB',sell:3112,parts:[
+    ['CPU','AMD Ryzen 5 9600X',219],['GPU','RTX 5060 Ti 16GB',529],['Motherboard','ASUS ROG STRIX B650E-F',229],
+    ['RAM','32GB DDR5-6000',74],['Storage','Samsung 990 Pro 2TB',99],['Cooling','Arctic Liquid Freezer III 240',64],
+    ['PSU','Corsair RM850x 850W',109],['Case','Fractal Design Define 7',149],['OS','Windows 11 Pro OEM',139]]},
+  {name:'Creator Prime Compact',config:'Ryzen 9 9800X3D + RTX 5070',sell:3434,parts:[
+    ['CPU','AMD Ryzen 7 9800X3D',449],['GPU','RTX 5070 12GB',699],['Motherboard','ASUS ROG STRIX B650E-F',229],
+    ['RAM','32GB DDR5-6000',74],['Storage','Samsung 990 Pro 2TB',99],['Cooling','Arctic Liquid Freezer III 360',89],
+    ['PSU','Corsair RM850x 850W',109],['Case','Fractal Design Define 7',149],['OS','Windows 11 Pro OEM',139]]},
+  {name:'Creator Prime Mini',config:'Ryzen 9 9800X3D + RTX 5070 Ti',sell:3733,parts:[
+    ['CPU','AMD Ryzen 7 9800X3D',449],['GPU','RTX 5070 Ti 16GB',849],['Motherboard','ASUS ROG STRIX B650E-F',229],
+    ['RAM','64GB DDR5-6000',129],['Storage','Samsung 990 Pro 2TB',99],['Cooling','Arctic Liquid Freezer III 360',89],
+    ['PSU','Corsair RM850x 850W',109],['Case','Fractal Design Define 7',149],['OS','Windows 11 Pro OEM',139]]},
+  {name:'Creator Prime AMD',config:'Ryzen 9 9800X3D + RTX 5080',sell:4296,parts:[
+    ['CPU','AMD Ryzen 7 9800X3D',449],['GPU','RTX 5080 16GB',1199],['Motherboard','ASUS ProArt X670E',229],
+    ['RAM','64GB DDR5-6000',129],['Storage','Samsung 990 Pro 2TB',99],['Cooling','Arctic Liquid Freezer III 360',89],
+    ['PSU','Corsair HX1200 1200W',199],['Case','Fractal Design Define 7',149],['OS','Windows 11 Pro OEM',139]]},
+  {name:'Creator Prime Intel',config:'Core Ultra 9 285K + RTX 5090',sell:7064,parts:[
+    ['CPU','Intel Core Ultra 9 285K',519],['GPU','RTX 5090 32GB',1999],['Motherboard','ASUS ProArt Z890-Creator',339],
+    ['RAM','64GB DDR5-6000',129],['Storage','Samsung 990 Pro 2TB',99],['Cooling','Arctic Liquid Freezer III 360',89],
+    ['PSU','Corsair HX1200 1200W',199],['Case','Fractal Design Define 7',149],['OS','Windows 11 Pro OEM',139]]},
+  {name:'Creator Prime Ryzen',config:'Ryzen 9 9950X3D + RTX 5090',sell:7726,parts:[
+    ['CPU','AMD Ryzen 9 9950X3D',699],['GPU','RTX 5090 32GB',1999],['Motherboard','ASUS ProArt X670E',339],
+    ['RAM','64GB DDR5-6000',129],['Storage','Samsung 990 Pro 4TB',199],['Cooling','Arctic Liquid Freezer III 360',89],
+    ['PSU','Corsair HX1200 1200W',199],['Case','Fractal Design Define 7',149],['OS','Windows 11 Pro OEM',139]]},
+  {name:'Infinitum 4U',config:'Ryzen 9 9950X3D + RTX 5090 (rackmount)',sell:8094,parts:[
+    ['CPU','AMD Ryzen 9 9950X3D',699],['GPU','RTX 5090 32GB',1999],['Motherboard','ASUS ProArt X670E',339],
+    ['RAM','128GB DDR5-6000',289],['Storage','Samsung 990 Pro 4TB',199],['Cooling','Alphacool custom loop',389],
+    ['PSU','Corsair HX1200 1200W',199],['Case','4U rackmount chassis',299],['OS','Windows 11 Pro OEM',139]]},
+];
+
+function renderPrebuilts(){
+  const tb=document.getElementById('prebuilt-tbody');
+  if(!tb)return;
+  tb.innerHTML=PREBUILTS.map((p,i)=>{
+    const cost=p.parts.reduce((s,x)=>s+x[2],0);
+    return `<tr style="cursor:pointer" onclick="pbToggle(${i})">
+      <td style="padding-left:16px;font-weight:500">${p.name}</td>
+      <td>${p.config}</td>
+      <td>$${p.sell.toLocaleString()}</td>
+      <td class="bp2">$${cost.toLocaleString()}</td>
+      <td><button class="eb">show parts</button></td>
+    </tr>
+    <tr><td colspan="5" style="padding:0">
+      <div class="es" id="pb-${i}">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px">
+          ${p.parts.map(x=>`<tr>
+            <td style="padding:5px 8px;color:#888;width:90px">${x[0]}</td>
+            <td style="padding:5px 8px">${x[1]}</td>
+            <td style="padding:5px 8px;text-align:right;font-weight:500">$${x[2].toLocaleString()}</td>
+          </tr>`).join('')}
+          <tr style="border-top:1px solid #d8d8d4">
+            <td style="padding:6px 8px;font-weight:500" colspan="2">Estimated component cost (best prices)</td>
+            <td style="padding:6px 8px;text-align:right;font-weight:600;color:#1a7a3e">$${cost.toLocaleString()}</td>
+          </tr>
+        </table>
+        <div style="font-size:11px;color:#999;padding:0 8px 4px">Estimated at best available component prices, June 2026. Use the Price Tracker or AI Assistant to confirm current live pricing before purchasing.</div>
+      </div>
+    </td></tr>`;
+  }).join('');
+}
+
+function pbToggle(i){
+  const el=document.getElementById('pb-'+i);if(!el)return;
+  const op=el.classList.contains('on');
+  document.querySelectorAll('#prebuilt-tbody .es').forEach(e=>e.classList.remove('on'));
+  if(!op)el.classList.add('on');
+}
+
+let plog=JSON.parse(localStorage.getItem('sd2_log')||'[]');
+let ch=[];
+
+async function ai(msg,hist=false){
+  if(hist)ch.push({role:'user',content:msg});
+  const msgs=hist?ch:[{role:'user',content:msg}];
+  const r=await fetch('/api/chat',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({system:CTX,messages:msgs})
+  });
+  if(!r.ok){
+    const errText=await r.text();
+    throw new Error('Request failed ('+r.status+'). '+errText.slice(0,120));
+  }
+  const d=await r.json();
+  const rep=d.content?.[0]?.text||'No response.';
+  if(hist){ch.push({role:'assistant',content:rep});if(ch.length>20)ch=ch.slice(-20);}
+  return rep;
+}
+
+const TABS=['dash','track','rfp','intel','comp','log','cr','ca'];
+let trackerSearched=false;
+function go(id){
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  const i=TABS.indexOf(id);
+  document.querySelectorAll('.tab')[i]?.classList.add('on');
+  if(id==='track'&&!trackerSearched){trackerSearched=true;autoSearch();}
+}
+
+async function autoSearch(){
+  const el=document.getElementById('tai');const bd=document.getElementById('tab');
+  const note=document.getElementById('auto-note');
+  if(note)note.style.display='block';
+  el.classList.add('on');
+  bd.textContent='Searching current prices across retailers...';
+  try{
+    const top=COMPS.filter(c=>['rtx5090','rtx5080','rtx5070ti','rtx5070','rtx5060ti','r9x3d','r7x3d','ram2','ram3','ssd1','ssd2','cool1','psu1','psu2'].includes(c.id));
+    const r=await ai(`Search current live prices for these Steiger Dynamics components as of today across Amazon, Newegg, B&H Photo, Micro Center, Best Buy, and Walmart. For each component tell me the single best price available right now and where to get it. Flag any that are significantly above or below my standard price. Flag any supply or availability issues.\n\n${top.map(c=>`${c.n}: my standard price $${c.mp}`).join('\n')}\n\nFormat as a clean list: Component | Best price | Where | vs my price | Notes`);
+    bd.textContent=r;
+    if(note)note.textContent='Prices searched on load. Click Search on any row for a deeper dive on that component.';
+  }catch(e){
+    bd.textContent='Auto price search failed. Click Search on any component for individual lookups.';
+    if(note)note.style.display='none';
+  }
+}
+
+function rtrack(){
+  const s=(document.getElementById('ts')?.value||'').toLowerCase();
+  const c=document.getElementById('tc')?.value||'';
+  const f=COMPS.filter(x=>(!c||x.cat===c)&&(!s||x.n.toLowerCase().includes(s)));
+  const tb=document.getElementById('tb');
+  if(!f.length){tb.innerHTML='<tr><td colspan="8" class="ne">No components match.</td></tr>';return;}
+  tb.innerHTML=f.map(x=>{
+    const pr=Object.values(x.ret).filter(p=>p!==null);
+    const best=Math.min(...pr);
+    const br=Object.entries(x.ret).find(([k,v])=>v===best)?.[0]||'';
+    const sv=x.mp-best;
+    const tc=x.trend.startsWith('up')?'#c0392b':x.trend.startsWith('down')?'#1a7a3e':'#888';
+    return`<tr>
+      <td style="padding-left:16px"><div style="font-weight:500;font-size:13px">${x.n}</div><button class="eb" onclick="tex('${x.id}')">show retailers</button></td>
+      <td><span class="cp">${x.cat}</span></td>
+      <td>$${x.mp}</td>
+      <td class="bp2">$${best} <span style="font-size:11px;color:#888;font-weight:400">(${br})</span></td>
+      <td>${sv>0?`<span class="st">Save $${sv}</span>`:'<span style="color:#aaa;font-size:12px">At market</span>'}</td>
+      <td style="color:${tc};font-size:12px">${x.trend}</td>
+      <td><span class="rd r${x.risk}"></span><span style="font-size:12px;color:#555">${x.risk}</span></td>
+      <td><button class="btn bg" style="padding:4px 10px;font-size:12px" onclick="s1('${x.id}')">Search</button></td>
+    </tr>
+    <tr><td colspan="8" style="padding:0"><div class="es" id="ex-${x.id}"><div class="rr">${Object.entries(x.ret).map(([r,p])=>{if(!p)return`<div class="rc2"><div class="rn">${r}</div><div style="font-size:12px;color:#bbb">Not listed</div></div>`;const ib=p===best;return`<div class="rc2" style="${ib?'border-color:#27ae60;background:#f0faf4':''}"><div class="rn">${r}${ib?': best':''}</div><div class="rp${ib?' b':''}">$${p}</div><a href="https://www.google.com/search?q=${encodeURIComponent(r+' '+x.n)}" target="_blank" class="rl2">Search &rarr;</a></div>`;}).join('')}</div></div></td></tr>`;
+  }).join('');
+}
+
+function tex(id){
+  const el=document.getElementById('ex-'+id);if(!el)return;
+  const op=el.classList.contains('on');
+  document.querySelectorAll('.es').forEach(e=>e.classList.remove('on'));
+  if(!op)el.classList.add('on');
+}
+
+async function s1(id){
+  const x=COMPS.find(c=>c.id===id);if(!x)return;
+  const el=document.getElementById('tai');const bd=document.getElementById('tab');
+  el.classList.add('on');bd.textContent='Searching current prices...';
+  try{bd.textContent=await ai(`Search best current price for "${x.n}" across Amazon, Newegg, B&H, Micro Center, Best Buy, Walmart. My standard price: $${x.mp}. Risk: ${x.risk}. Trend: ${x.trend}. Should I buy now or wait? Any deals?`);}
+  catch(e){bd.textContent='Search failed.';}
+}
+
+async function sall(){
+  ld('sab','tsp',true);
+  const el=document.getElementById('tai');const bd=document.getElementById('tab');
+  el.classList.add('on');bd.textContent='Searching prices...';
+  try{
+    const t=COMPS.filter(c=>['rtx5070ti','r7x3d','ram2','ssd1','cool1'].includes(c.id));
+    bd.textContent=await ai(`Find best current prices for these Steiger BOM components across Amazon, Newegg, B&H, Micro Center, Best Buy, Walmart:\n${t.map(c=>`- ${c.n} (my price: $${c.mp})`).join('\n')}\nFor each: best price, retailer, any deals. Flag savings. Note supply concerns. Give me an actionable summary.`);
+  }catch(e){bd.textContent='Failed.';}
+  ld('sab','tsp',false);
+}
+
+function ilog(){
+  const sel=document.getElementById('lc');if(!sel)return;
+  sel.innerHTML='<option value="">Select component...</option>'+COMPS.map(c=>`<option value="${c.id}">${c.n} (std: $${c.mp})</option>`).join('');
+  document.getElementById('ld').value=new Date().toISOString().split('T')[0];
+  rlog();
+}
+
+function addLog(){
+  const cid=document.getElementById('lc').value;
+  const sup=document.getElementById('ls').value;
+  const p=parseFloat(document.getElementById('lp').value);
+  const q=parseInt(document.getElementById('lq').value)||1;
+  const d=document.getElementById('ld').value;
+  const n=document.getElementById('ln').value;
+  if(!cid||!p||!d){alert('Fill in component, price, and date.');return;}
+  const c=COMPS.find(x=>x.id===cid);
+  const ppv=(p-c.mp)*q;
+  plog.unshift({id:Date.now(),cid,name:c.n,supplier:sup,price:p,qty:q,total:p*q,date:d,notes:n,std:c.mp,ppv});
+  localStorage.setItem('sd2_log',JSON.stringify(plog));
+  rlog();
+  ['lp','ln'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('lq').value='1';
+}
+
+function rlog(){
+  const tb=document.getElementById('ltb');
+  const st=document.getElementById('lstt');
+  const pv=document.getElementById('ppvs');
+  const ds=document.getElementById('d-sav');
+  if(!plog.length){
+    tb.innerHTML='<tr><td colspan="10" class="ne">No entries yet.</td></tr>';
+    st.textContent='0 entries.';pv.textContent='No entries yet.';
+    if(ds)ds.textContent='$0';return;
+  }
+  const tp=plog.reduce((s,e)=>s+e.ppv,0);
+  const ts=plog.reduce((s,e)=>s+e.total,0);
+  st.textContent=`${plog.length} entries \u00B7 Total spend: $${ts.toLocaleString()}`;
+  pv.innerHTML=`<span class="${tp<=0?'pn':'pp'}">${tp<=0?'Favorable':'Unfavorable'} \u2014 $${Math.abs(tp).toFixed(2)}</span><br><span style="font-size:12px;color:#888">${tp<0?`Saved $${Math.abs(tp).toFixed(2)} vs standard`:`$${tp.toFixed(2)} above standard`}</span>`;
+  if(ds)ds.textContent=tp<0?`$${Math.abs(tp).toFixed(0)}`:'$0';
+  tb.innerHTML=plog.map(e=>`<tr>
+    <td>${e.date}</td><td>${e.name}</td><td style="color:#666">${e.supplier||'\u2014'}</td>
+    <td>${e.qty}</td><td style="font-weight:500">$${e.price}</td><td>$${e.total.toFixed(2)}</td>
+    <td style="color:#888">$${e.std}</td>
+    <td class="${e.ppv<=0?'pn':'pp'}">${e.ppv<=0?'Save':'Over'} $${Math.abs(e.ppv).toFixed(2)}</td>
+    <td style="color:#888;font-size:12px">${e.notes||'\u2014'}</td>
+    <td><button class="db" onclick="dlog(${e.id})">&#215;</button></td>
+  </tr>`).join('');
+}
+
+function dlog(id){plog=plog.filter(e=>e.id!==id);localStorage.setItem('sd2_log',JSON.stringify(plog));rlog();}
+
+function expLog(){
+  const h='Date,Component,Supplier,Qty,Unit Price,Total,Std Price,PPV,Notes\n';
+  const r=plog.map(e=>`${e.date},"${e.name}",${e.supplier||''},${e.qty},${e.price},${e.total.toFixed(2)},${e.std},${e.ppv.toFixed(2)},"${e.notes||''}"`).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([h+r],{type:'text/csv'}));
+  a.download=`steiger-pricelog-${new Date().toISOString().split('T')[0]}.csv`;a.click();
+}
+
+async function anaLog(){
+  if(!plog.length){alert('No entries to analyze.');return;}
+  ld('alb',null,true);
+  const el=document.getElementById('lai');const bd=document.getElementById('lab');
+  el.classList.add('on');bd.textContent='Analyzing...';
+  const sum=plog.slice(0,20).map(e=>`${e.date}: ${e.name} \u2014 $${e.price} (std $${e.std}, PPV $${e.ppv.toFixed(2)}, qty ${e.qty}, ${e.supplier||'unknown'})`).join('\n');
+  try{bd.textContent=await ai(`Analyze this Steiger Dynamics price log:\n\n${sum}\n\n1) PPV summary 2) Where we pay above market and why 3) Best performing categories 4) Renegotiation recommendations 5) Any patterns worth noting`);}
+  catch(e){bd.textContent='Failed.';}
+  ld('alb',null,false);
+}
+
+async function doCR(){
+  const cl=document.getElementById('crcl').value.trim();
+  if(!cl){alert('Paste contract clauses to review.');return;}
+  ld('crb','crsp',true);
+  const el=document.getElementById('cro');const bd=document.getElementById('crb2');
+  el.classList.add('on');bd.textContent='Reviewing...';
+  const v=document.getElementById('crv').value;
+  const p=document.getElementById('crp').value;
+  const r=document.getElementById('crr').value;
+  try{bd.textContent=await ai(`Review contract clauses for ${p||'component supply'} agreement with ${v||'supplier'} for Steiger Dynamics.\n\nCLAUSES:\n${cl}\n\nOUR REQUIREMENTS:\n${r}\n\n1) Explain each clause in plain business language\n2) Flag unfavorable or risky terms (red flags)\n3) Identify ambiguous language\n4) Compare against our requirements\n5) Suggest 2-3 specific improvements\n6) Overall risk assessment: safe to sign / needs changes / major renegotiation required`);}
+  catch(e){bd.textContent='Failed.';}
+  ld('crb','crsp',false);
+}
+
+async function doRFP(){
+  const p=document.getElementById('rfpp').value.trim();
+  if(!p){alert('Enter what you are sourcing.');return;}
+  ld('rfpb','rfpsp',true);
+  const el=document.getElementById('rfpo');const bd=document.getElementById('rfpb2');
+  el.classList.add('on');bd.textContent='Building...';
+  const v=document.getElementById('rfpv').value;
+  const u=document.getElementById('rfpu').value;
+  const pr=document.getElementById('rfppr').value;
+  const s=document.getElementById('rfps').value;
+  try{bd.textContent=await ai(`Build an RFP and technical specification for Steiger Dynamics to source: ${p}\nVolume: ${v||'TBD'}\nPurpose and requirements: ${u||'For use in Steiger custom PC builds'}\nEvaluation priorities: ${pr||'Price, reliability, quality, lead time'}\n${s?`Suppliers: ${s}`:''}\n\n1) Technical specifications and performance requirements\n2) Non-negotiable requirements (clearly flagged)\n3) Evaluation criteria with suggested weightings\n4) What information we need suppliers to provide\n5) Key questions to include\n6) Scoring guide for evaluating responses\n7) Brief RFP cover letter opening`);}
+  catch(e){bd.textContent='Failed.';}
+  ld('rfpb','rfpsp',false);
+}
+
+async function doCA(){
+  const q=document.getElementById('caq').value.trim();
+  if(!q){alert('Paste the supplier quote.');return;}
+  ld('cab','casp',true);
+  const el=document.getElementById('cao');const bd=document.getElementById('cab2');
+  el.classList.add('on');bd.textContent='Analyzing...';
+  const s=document.getElementById('cas').value;
+  const t=document.getElementById('cat').value;
+  const c=document.getElementById('cac').value;
+  try{bd.textContent=await ai(`Analyze this supplier quote for Steiger Dynamics from ${s||'a supplier'}:\n\n${q}\n\nTarget reduction: ${t||'8-10%'}\nContext: ${c||'Standard evaluation'}\n\n1) Which line items have room for negotiation and why\n2) Costs that seem high vs market rates\n3) Missing cost elements (shipping, warranty, minimums etc.)\n4) Specific negotiation approach to achieve target reduction\n5) 3 specific questions to ask about concerning line items\n6) Recommended counter-offer structure\n7) Recommendations ranked by potential impact`);}
+  catch(e){bd.textContent='Failed.';}
+  ld('cab','casp',false);
+}
+
+async function doComp(){
+  ld('cob','cosp',true);
+  const el=document.getElementById('coo');const bd=document.getElementById('cob2');
+  el.classList.add('on');bd.textContent='Scanning...';
+  try{bd.textContent=await ai(`Scan for current competitor intelligence for Steiger Dynamics. Research: iBUYPOWER, CyberPowerPC, NZXT BLD, Maingear, Puget Systems, Origin PC (HP).\n\nFor each: 1) What changed recently in their product lineup or business? 2) What supplier signal does that create? 3) What specific action should Steiger's buyer take?\n\nAlso flag any PC component market news from the past month affecting Steiger's purchasing. Format as actionable intelligence.`);}
+  catch(e){bd.textContent='Failed.';}
+  ld('cob','cosp',false);
+}
+
+function am(role,text){
+  const c=document.getElementById('cm');
+  const d=document.createElement('div');
+  d.style.cssText='display:flex;gap:10px;'+(role==='user'?'flex-direction:row-reverse':'');
+  const av=role==='user'?'<div style="width:26px;height:26px;border-radius:50%;background:#e0e0dc;color:#555;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px">You</div>':'<div style="width:26px;height:26px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px">AI</div>';
+  const bg=role==='user'?'background:#f0f6fd;border-radius:10px 4px 10px 10px':'background:#f4f4f2;border-radius:4px 10px 10px 10px';
+  d.innerHTML=role==='user'?`<div style="${bg};padding:10px 14px;font-size:13px;line-height:1.65;max-width:85%;white-space:pre-wrap">${text}</div>${av}`:`${av}<div style="${bg};padding:10px 14px;font-size:13px;line-height:1.65;max-width:85%;white-space:pre-wrap">${text}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+
+async function sc(){
+  const inp=document.getElementById('ci');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';am('user',msg);
+  const btn=document.getElementById('csb');btn.disabled=true;
+  const th=document.createElement('div');
+  th.style.cssText='display:flex;gap:10px;align-items:center';
+  th.innerHTML='<div style="width:26px;height:26px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0">AI</div><div style="font-size:12px;color:#888;font-style:italic">Thinking...</div>';
+  document.getElementById('cm').appendChild(th);document.getElementById('cm').scrollTop=9999;
+  try{const r=await ai(msg,true);th.remove();am('ai',r);}
+  catch(e){th.remove();am('ai','Error. Check API connection.');}
+  btn.disabled=false;
+}
+
+function qa(m){
+  document.getElementById('ai-window').classList.add('on');
+  document.getElementById('ai-fab').style.display='none';
+  document.getElementById('ci').value=m;sc();
+}
+function ck(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sc();}}
+function toggleAI(open){
+  document.getElementById('ai-window').classList.toggle('on',open);
+  document.getElementById('ai-fab').style.display=open?'none':'block';
+  if(open)setTimeout(()=>document.getElementById('ci').focus(),50);
+}
+
+function ld(btn,spin,on){
+  const b=document.getElementById(btn);const s=spin?document.getElementById(spin):null;
+  if(b)b.disabled=on;
+  if(s)s.style.display=on?'inline':'none';
+  if(b&&!on&&btn==='alb')b.textContent='Analyze with AI';
+}
+
+function cp(id){
+  const el=document.getElementById(id);
+  if(el)navigator.clipboard?.writeText(el.textContent||'').catch(()=>{});
+}
+
+function dl(id,label){
+  const el=document.getElementById(id);
+  if(!el||!el.textContent.trim()){alert('No content to download yet.');return;}
+  const filename=label.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+new Date().toISOString().split('T')[0]+'.txt';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([el.textContent],{type:'text/plain'}));
+  a.download=filename;a.click();
+}
+
+function updateStd(){
+  const cid=document.getElementById('sp-comp').value;
+  const p=parseFloat(document.getElementById('sp-price').value);
+  if(!cid||!p){alert('Select a component and enter a price.');return;}
+  const c=COMPS.find(x=>x.id===cid);
+  if(!c)return;
+  c.mp=p;
+  // persist to localStorage
+  const overrides=JSON.parse(localStorage.getItem('sd2_std')||'{}');
+  overrides[cid]=p;
+  localStorage.setItem('sd2_std',JSON.stringify(overrides));
+  const conf=document.getElementById('sp-confirm');
+  conf.textContent=`Standard price for ${c.n} updated to $${p}.`;
+  conf.style.display='block';
+  setTimeout(()=>conf.style.display='none',3000);
+  rtrack();rlog();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // load any saved standard price overrides
+  const overrides=JSON.parse(localStorage.getItem('sd2_std')||'{}');
+  Object.entries(overrides).forEach(([id,p])=>{const c=COMPS.find(x=>x.id===id);if(c)c.mp=p;});
+  rtrack();ilog();renderPrebuilts();
+  // populate std price selector
+  const sel=document.getElementById('sp-comp');
+  if(sel)sel.innerHTML='<option value="">Select component to update standard price...</option>'+COMPS.map(c=>`<option value="${c.id}">${c.n} (current std: $${c.mp})</option>`).join('');
+});
+</script>
+</body>
+</html>
