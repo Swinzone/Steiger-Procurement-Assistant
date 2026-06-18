@@ -37,7 +37,7 @@ textarea{resize:vertical}
 .out{display:none;background:#fff;border:1px solid #d8d8d4;border-radius:6px;padding:20px;margin-top:16px}
 .out.on{display:block}
 .ol{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #e8e8e4;display:flex;justify-content:space-between}
-.ob{font-size:13px;line-height:1.75;color:#2a2a2a;white-space:pre-wrap}
+.ob{font-size:13px;line-height:1.75;color:#2a2a2a}
 .pt{width:100%;border-collapse:collapse;font-size:13px}
 .pt th{text-align:left;padding:8px 12px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:#888;border-bottom:1px solid #d8d8d4}
 .pt td{padding:10px 12px;border-bottom:1px solid #ebebeb;vertical-align:middle}
@@ -111,6 +111,21 @@ textarea{resize:vertical}
 .ai-ubub{background:#f0f6fd;border-radius:10px 4px 10px 10px;padding:9px 13px;font-size:13px;line-height:1.6;max-width:85%;white-space:pre-wrap}
 #ai-input-row{border-top:1px solid #e8e8e4;padding:12px;display:flex;gap:8px}
 #ai-input-row textarea{flex:1;height:42px;resize:none;border:1px solid #d8d8d4;border-radius:4px;padding:9px 12px;font-size:13px;font-family:inherit}
+.rendered h1{font-size:17px;font-weight:600;margin:18px 0 8px}
+.rendered h2{font-size:15px;font-weight:600;margin:16px 0 7px;padding-bottom:4px;border-bottom:1px solid #e8e8e4}
+.rendered h3{font-size:13px;font-weight:600;margin:13px 0 5px}
+.rendered p{margin:0 0 8px;font-size:13px;line-height:1.7;color:#2a2a2a}
+.rendered ul,.rendered ol{margin:6px 0 10px 18px;font-size:13px;color:#2a2a2a;line-height:1.7}
+.rendered li{margin-bottom:3px}
+.rendered strong{font-weight:600;color:#1a1a1a}
+.rendered em{font-style:italic}
+.rendered table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+.rendered th{text-align:left;padding:7px 10px;background:#f4f4f2;border:1px solid #d8d8d4;font-weight:600;font-size:11px;color:#444}
+.rendered td{padding:7px 10px;border:1px solid #e8e8e4;vertical-align:top;color:#2a2a2a}
+.rendered blockquote{border-left:3px solid #d8d8d4;margin:10px 0;padding:8px 14px;background:#f9f9f8;color:#555;font-size:13px}
+.rendered hr{border:none;border-top:1px solid #e8e8e4;margin:16px 0}
+.rendered code{background:#f4f4f2;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:12px}
+.rendered pre{background:#f4f4f2;padding:12px;border-radius:4px;overflow-x:auto;font-size:12px;margin:10px 0}
 </style>
 </head>
 <body>
@@ -540,10 +555,10 @@ async function autoSearch(){
   try{
     const top=COMPS.filter(c=>['rtx5090','rtx5080','rtx5070ti','rtx5070','rtx5060ti','r9x3d','r7x3d','ram2','ram3','ssd1','ssd2','cool1','psu1','psu2'].includes(c.id));
     const r=await ai(`Search current live prices for these Steiger Dynamics components as of today across Amazon, Newegg, B&H Photo, Micro Center, Best Buy, and Walmart. For each component tell me the single best price available right now and where to get it. Flag any that are significantly above or below my standard price. Flag any supply or availability issues.\n\n${top.map(c=>`${c.n}: my standard price $${c.mp}`).join('\n')}\n\nFormat as a clean list: Component | Best price | Where | vs my price | Notes`);
-    bd.textContent=r;
+    renderMD(r,'tab');
     if(note)note.textContent='Prices searched on load. Click Search on any row for a deeper dive on that component.';
   }catch(e){
-    bd.textContent='Auto price search failed. Click Search on any component for individual lookups.';
+    bd.textContent='Auto price search failed. Check your connection and try again.';
     if(note)note.style.display='none';
   }
 }
@@ -585,8 +600,8 @@ async function s1(id){
   const x=COMPS.find(c=>c.id===id);if(!x)return;
   const el=document.getElementById('tai');const bd=document.getElementById('tab');
   el.classList.add('on');bd.textContent='Searching current prices...';
-  try{bd.textContent=await ai(`Search best current price for "${x.n}" across Amazon, Newegg, B&H, Micro Center, Best Buy, Walmart. My standard price: $${x.mp}. Risk: ${x.risk}. Trend: ${x.trend}. Should I buy now or wait? Any deals?`);}
-  catch(e){bd.textContent='Search failed.';}
+  try{const r=await ai(`Search best current price for "${x.n}" across Amazon, Newegg, B&H, Micro Center, Best Buy, Walmart. My standard price: $${x.mp}. Risk: ${x.risk}. Trend: ${x.trend}. Should I buy now or wait? Any deals?`);renderMD(r,'tab');}
+  catch(e){bd.textContent='Search failed. Check your connection and try again.';}
 }
 
 async function sall(){
@@ -595,8 +610,9 @@ async function sall(){
   el.classList.add('on');bd.textContent='Searching prices...';
   try{
     const t=COMPS.filter(c=>['rtx5070ti','r7x3d','ram2','ssd1','cool1'].includes(c.id));
-    bd.textContent=await ai(`Find best current prices for these Steiger BOM components across Amazon, Newegg, B&H, Micro Center, Best Buy, Walmart:\n${t.map(c=>`- ${c.n} (my price: $${c.mp})`).join('\n')}\nFor each: best price, retailer, any deals. Flag savings. Note supply concerns. Give me an actionable summary.`);
-  }catch(e){bd.textContent='Failed.';}
+    const r=await ai(`Find best current prices for these Steiger BOM components across Amazon, Newegg, B&H, Micro Center, Best Buy, Walmart:\n${t.map(c=>`- ${c.n} (my price: $${c.mp})`).join('\n')}\nFor each: best price, retailer, any deals. Flag savings. Note supply concerns. Give me an actionable summary.`);
+    renderMD(r,'tab');
+  }catch(e){bd.textContent='Search failed. Check your connection and try again.';}
   ld('sab','tsp',false);
 }
 
@@ -664,8 +680,8 @@ async function anaLog(){
   const el=document.getElementById('lai');const bd=document.getElementById('lab');
   el.classList.add('on');bd.textContent='Analyzing...';
   const sum=plog.slice(0,20).map(e=>`${e.date}: ${e.name} \u2014 $${e.price} (std $${e.std}, PPV $${e.ppv.toFixed(2)}, qty ${e.qty}, ${e.supplier||'unknown'})`).join('\n');
-  try{bd.textContent=await ai(`Analyze this Steiger Dynamics price log:\n\n${sum}\n\n1) PPV summary 2) Where we pay above market and why 3) Best performing categories 4) Renegotiation recommendations 5) Any patterns worth noting`);}
-  catch(e){bd.textContent='Failed.';}
+  try{const r=await ai(`Analyze this Steiger Dynamics price log:\n\n${sum}\n\n1) PPV summary 2) Where we pay above market and why 3) Best performing categories 4) Renegotiation recommendations 5) Any patterns worth noting`);renderMD(r,'lab');}
+  catch(e){bd.textContent='Search failed. Check your connection and try again.';}
   ld('alb',null,false);
 }
 
@@ -678,8 +694,8 @@ async function doCR(){
   const v=document.getElementById('crv').value;
   const p=document.getElementById('crp').value;
   const r=document.getElementById('crr').value;
-  try{bd.textContent=await ai(`Review contract clauses for ${p||'component supply'} agreement with ${v||'supplier'} for Steiger Dynamics.\n\nCLAUSES:\n${cl}\n\nOUR REQUIREMENTS:\n${r}\n\n1) Explain each clause in plain business language\n2) Flag unfavorable or risky terms (red flags)\n3) Identify ambiguous language\n4) Compare against our requirements\n5) Suggest 2-3 specific improvements\n6) Overall risk assessment: safe to sign / needs changes / major renegotiation required`);}
-  catch(e){bd.textContent='Failed.';}
+  try{const res=await ai(`Review contract clauses for ${p||'component supply'} agreement with ${v||'supplier'} for Steiger Dynamics.\n\nCLAUSES:\n${cl}\n\nOUR REQUIREMENTS:\n${r}\n\n1) Explain each clause in plain business language\n2) Flag unfavorable or risky terms (red flags)\n3) Identify ambiguous language\n4) Compare against our requirements\n5) Suggest 2-3 specific improvements\n6) Overall risk assessment: safe to sign / needs changes / major renegotiation required`);renderMD(res,'crb2');}
+  catch(e){bd.textContent='Search failed. Check your connection and try again.';}
   ld('crb','crsp',false);
 }
 
@@ -693,8 +709,8 @@ async function doRFP(){
   const u=document.getElementById('rfpu').value;
   const pr=document.getElementById('rfppr').value;
   const s=document.getElementById('rfps').value;
-  try{bd.textContent=await ai(`Build an RFP and technical specification for Steiger Dynamics to source: ${p}\nVolume: ${v||'TBD'}\nPurpose and requirements: ${u||'For use in Steiger custom PC builds'}\nEvaluation priorities: ${pr||'Price, reliability, quality, lead time'}\n${s?`Suppliers: ${s}`:''}\n\n1) Technical specifications and performance requirements\n2) Non-negotiable requirements (clearly flagged)\n3) Evaluation criteria with suggested weightings\n4) What information we need suppliers to provide\n5) Key questions to include\n6) Scoring guide for evaluating responses\n7) Brief RFP cover letter opening`);}
-  catch(e){bd.textContent='Failed.';}
+  try{const r=await ai(`Build an RFP and technical specification for Steiger Dynamics to source: ${p}\nVolume: ${v||'TBD'}\nPurpose and requirements: ${u||'For use in Steiger custom PC builds'}\nEvaluation priorities: ${pr||'Price, reliability, quality, lead time'}\n${s?`Suppliers: ${s}`:''}\n\n1) Technical specifications and performance requirements\n2) Non-negotiable requirements (clearly flagged)\n3) Evaluation criteria with suggested weightings\n4) What information we need suppliers to provide\n5) Key questions to include\n6) Scoring guide for evaluating responses\n7) Brief RFP cover letter opening`);renderMD(r,'rfpb2');}
+  catch(e){bd.textContent='Search failed. Check your connection and try again.';}
   ld('rfpb','rfpsp',false);
 }
 
@@ -707,8 +723,8 @@ async function doCA(){
   const s=document.getElementById('cas').value;
   const t=document.getElementById('cat').value;
   const c=document.getElementById('cac').value;
-  try{bd.textContent=await ai(`Analyze this supplier quote for Steiger Dynamics from ${s||'a supplier'}:\n\n${q}\n\nTarget reduction: ${t||'8-10%'}\nContext: ${c||'Standard evaluation'}\n\n1) Which line items have room for negotiation and why\n2) Costs that seem high vs market rates\n3) Missing cost elements (shipping, warranty, minimums etc.)\n4) Specific negotiation approach to achieve target reduction\n5) 3 specific questions to ask about concerning line items\n6) Recommended counter-offer structure\n7) Recommendations ranked by potential impact`);}
-  catch(e){bd.textContent='Failed.';}
+  try{const r=await ai(`Analyze this supplier quote for Steiger Dynamics from ${s||'a supplier'}:\n\n${q}\n\nTarget reduction: ${t||'8-10%'}\nContext: ${c||'Standard evaluation'}\n\n1) Which line items have room for negotiation and why\n2) Costs that seem high vs market rates\n3) Missing cost elements (shipping, warranty, minimums etc.)\n4) Specific negotiation approach to achieve target reduction\n5) 3 specific questions to ask about concerning line items\n6) Recommended counter-offer structure\n7) Recommendations ranked by potential impact`);renderMD(r,'cab2');}
+  catch(e){bd.textContent='Search failed. Check your connection and try again.';}
   ld('cab','casp',false);
 }
 
@@ -716,8 +732,8 @@ async function doComp(){
   ld('cob','cosp',true);
   const el=document.getElementById('coo');const bd=document.getElementById('cob2');
   el.classList.add('on');bd.textContent='Scanning...';
-  try{bd.textContent=await ai(`Scan for current competitor intelligence for Steiger Dynamics. Research: iBUYPOWER, CyberPowerPC, NZXT BLD, Maingear, Puget Systems, Origin PC (HP).\n\nFor each: 1) What changed recently in their product lineup or business? 2) What supplier signal does that create? 3) What specific action should Steiger's buyer take?\n\nAlso flag any PC component market news from the past month affecting Steiger's purchasing. Format as actionable intelligence.`);}
-  catch(e){bd.textContent='Failed.';}
+  try{const r=await ai(`Scan for current competitor intelligence for Steiger Dynamics. Research: iBUYPOWER, CyberPowerPC, NZXT BLD, Maingear, Puget Systems, Origin PC (HP).\n\nFor each: 1) What changed recently in their product lineup or business? 2) What supplier signal does that create? 3) What specific action should Steiger's buyer take?\n\nAlso flag any PC component market news from the past month affecting Steiger's purchasing. Format as actionable intelligence.`);renderMD(r,'cob2');}
+  catch(e){bd.textContent='Search failed. Check your connection and try again.';}
   ld('cob','cosp',false);
 }
 
@@ -727,7 +743,8 @@ function am(role,text){
   d.style.cssText='display:flex;gap:10px;'+(role==='user'?'flex-direction:row-reverse':'');
   const av=role==='user'?'<div style="width:26px;height:26px;border-radius:50%;background:#e0e0dc;color:#555;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px">You</div>':'<div style="width:26px;height:26px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px">AI</div>';
   const bg=role==='user'?'background:#f0f6fd;border-radius:10px 4px 10px 10px':'background:#f4f4f2;border-radius:4px 10px 10px 10px';
-  d.innerHTML=role==='user'?`<div style="${bg};padding:10px 14px;font-size:13px;line-height:1.65;max-width:85%;white-space:pre-wrap">${text}</div>${av}`:`${av}<div style="${bg};padding:10px 14px;font-size:13px;line-height:1.65;max-width:85%;white-space:pre-wrap">${text}</div>`;
+  const formatted=role==='ai'?renderMDInline(text):text;
+  d.innerHTML=role==='user'?`<div style="${bg};padding:10px 14px;font-size:13px;line-height:1.65;max-width:85%;white-space:pre-wrap">${text}</div>${av}`:`${av}<div style="${bg};padding:10px 14px;font-size:13px;line-height:1.65;max-width:85%">${formatted}</div>`;
   c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
 
@@ -794,6 +811,52 @@ function updateStd(){
   conf.style.display='block';
   setTimeout(()=>conf.style.display='none',3000);
   rtrack();rlog();
+}
+
+function renderMDInline(text){
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code style="background:#f0f0ee;padding:1px 4px;border-radius:2px;font-size:12px">$1</code>')
+    .replace(/\n/g,'<br>');
+}
+
+function renderMD(text,targetId){
+  const el=document.getElementById(targetId);
+  if(!el)return;
+  let html=text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^---+$/gm,'<hr>')
+    .replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^\|(.+)\|$/gm,(match)=>{
+      const cells=match.slice(1,-1).split('|').map(c=>c.trim());
+      return '<tr>'+cells.map(c=>`<td>${c}</td>`).join('')+'</tr>';
+    })
+    .replace(/<tr>(<td>[-: ]+<\/td>)+<\/tr>/g,'')
+    .replace(/(<tr>.*?<\/tr>\n?)+/gs,m=>`<table>${m}</table>`)
+    .replace(/<table>(<tr>)(.*?)(<\/tr>)/s,(_m,open,cells,close)=>
+      '<table>'+open+cells.replace(/<td>/g,'<th>').replace(/<\/td>/g,'</th>')+close)
+    .replace(/^[-*] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/gs,m=>`<ul>${m}</ul>`)
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    .split('\n')
+    .map(line=>{
+      const t=line.trim();
+      if(!t)return'';
+      if(t.startsWith('<'))return t;
+      return`<p>${t}</p>`;
+    })
+    .join('\n');
+  el.innerHTML=html;
+  el.className='ob rendered';
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
