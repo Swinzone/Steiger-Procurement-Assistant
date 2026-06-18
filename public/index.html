@@ -415,31 +415,81 @@ USER BACKGROUND: Procurement specialist from ADI (Analog Devices) semiconductor 
 Be specific, concise, and actionable. Reference real components and real prices. No generic advice.`;
 
 const COMPS=[
-  {id:'rtx5090',n:'NVIDIA RTX 5090 32GB',cat:'GPU',mp:1999,risk:'critical',trend:'up 8%',ret:{Amazon:2099,Newegg:1999,'B&H':2049,'Micro Center':1999,'Best Buy':null,Walmart:null}},
-  {id:'rtx5080',n:'NVIDIA RTX 5080 16GB',cat:'GPU',mp:1199,risk:'high',trend:'up 5%',ret:{Amazon:1249,Newegg:1199,'B&H':1219,'Micro Center':1199,'Best Buy':1299,Walmart:null}},
-  {id:'rtx5070ti',n:'NVIDIA RTX 5070 Ti 16GB',cat:'GPU',mp:849,risk:'medium',trend:'flat',ret:{Amazon:879,Newegg:849,'B&H':869,'Micro Center':849,'Best Buy':899,Walmart:null}},
-  {id:'rtx5070',n:'NVIDIA RTX 5070 12GB',cat:'GPU',mp:699,risk:'medium',trend:'down 2%',ret:{Amazon:719,Newegg:699,'B&H':709,'Micro Center':699,'Best Buy':749,Walmart:699}},
-  {id:'rtx5060ti',n:'NVIDIA RTX 5060 Ti 16GB',cat:'GPU',mp:529,risk:'low',trend:'down 3%',ret:{Amazon:539,Newegg:529,'B&H':534,'Micro Center':529,'Best Buy':549,Walmart:529}},
-  {id:'r9x3d',n:'AMD Ryzen 9 9950X3D',cat:'CPU',mp:699,risk:'medium',trend:'down 4%',ret:{Amazon:699,Newegg:699,'B&H':699,'Micro Center':699,'Best Buy':null,Walmart:null}},
-  {id:'r7x3d',n:'AMD Ryzen 7 9800X3D',cat:'CPU',mp:449,risk:'low',trend:'down 5%',ret:{Amazon:449,Newegg:449,'B&H':449,'Micro Center':449,'Best Buy':449,Walmart:null}},
-  {id:'r5',n:'AMD Ryzen 5 9600X',cat:'CPU',mp:229,risk:'low',trend:'flat',ret:{Amazon:229,Newegg:219,'B&H':229,'Micro Center':219,'Best Buy':null,Walmart:null}},
-  {id:'i9',n:'Intel Core Ultra 9 285K',cat:'CPU',mp:549,risk:'low',trend:'down 6%',ret:{Amazon:519,Newegg:529,'B&H':539,'Micro Center':519,'Best Buy':null,Walmart:null}},
-  {id:'mb1',n:'ASUS ROG STRIX B650E-F (AM5)',cat:'Motherboard',mp:249,risk:'low',trend:'down 8%',ret:{Amazon:229,Newegg:239,'B&H':249,'Micro Center':239,'Best Buy':null,Walmart:null}},
-  {id:'mb2',n:'ASUS ProArt Z890-Creator (LGA1851)',cat:'Motherboard',mp:349,risk:'low',trend:'flat',ret:{Amazon:339,Newegg:349,'B&H':359,'Micro Center':349,'Best Buy':null,Walmart:null}},
-  {id:'mb3',n:'ASRock TRX50 WS (Threadripper)',cat:'Motherboard',mp:699,risk:'medium',trend:'flat',ret:{Amazon:699,Newegg:699,'B&H':null,'Micro Center':null,'Best Buy':null,Walmart:null}},
-  {id:'ram1',n:'G.Skill Trident Z5 32GB DDR5-6000',cat:'RAM',mp:79,risk:'low',trend:'up 5%',ret:{Amazon:79,Newegg:74,'B&H':79,'Micro Center':74,'Best Buy':null,Walmart:79}},
-  {id:'ram2',n:'G.Skill Trident Z5 64GB DDR5-6000',cat:'RAM',mp:138,risk:'medium',trend:'up 10%',ret:{Amazon:138,Newegg:129,'B&H':138,'Micro Center':132,'Best Buy':null,Walmart:null}},
-  {id:'ram3',n:'Kingston Fury Beast 64GB DDR5-6000',cat:'RAM',mp:132,risk:'medium',trend:'up 8%',ret:{Amazon:129,Newegg:132,'B&H':134,'Micro Center':129,'Best Buy':null,Walmart:129}},
-  {id:'ssd1',n:'Samsung 990 Pro 2TB NVMe Gen4',cat:'Storage',mp:119,risk:'low',trend:'down 15%',ret:{Amazon:99,Newegg:104,'B&H':109,'Micro Center':104,'Best Buy':119,Walmart:109}},
-  {id:'ssd2',n:'WD Black SN850X 2TB NVMe Gen4',cat:'Storage',mp:109,risk:'low',trend:'down 12%',ret:{Amazon:99,Newegg:104,'B&H':109,'Micro Center':99,'Best Buy':109,Walmart:99}},
-  {id:'cool1',n:'Arctic Liquid Freezer III 360 AIO',cat:'Cooling',mp:109,risk:'low',trend:'down 2%',ret:{Amazon:89,Newegg:94,'B&H':99,'Micro Center':89,'Best Buy':null,Walmart:null}},
-  {id:'cool2',n:'Arctic Liquid Freezer III 240 AIO',cat:'Cooling',mp:79,risk:'low',trend:'down 3%',ret:{Amazon:64,Newegg:69,'B&H':72,'Micro Center':64,'Best Buy':null,Walmart:null}},
-  {id:'cool3',n:'Scythe Mugen 6 ARGB Air Cooler',cat:'Cooling',mp:59,risk:'low',trend:'flat',ret:{Amazon:54,Newegg:56,'B&H':59,'Micro Center':null,'Best Buy':null,Walmart:null}},
-  {id:'psu1',n:'Corsair RM850x Platinum 850W',cat:'PSU',mp:129,risk:'low',trend:'down 8%',ret:{Amazon:109,Newegg:119,'B&H':129,'Micro Center':119,'Best Buy':null,Walmart:null}},
-  {id:'psu2',n:'Corsair HX1200 Platinum 1200W',cat:'PSU',mp:219,risk:'low',trend:'down 3%',ret:{Amazon:199,Newegg:209,'B&H':219,'Micro Center':204,'Best Buy':null,Walmart:null}},
-  {id:'case1',n:'Fractal Design Define 7 ATX',cat:'Case',mp:169,risk:'low',trend:'flat',ret:{Amazon:149,Newegg:159,'B&H':169,'Micro Center':159,'Best Buy':null,Walmart:null}},
-  {id:'case2',n:'Phanteks Eclipse P600S ATX',cat:'Case',mp:189,risk:'low',trend:'down 3%',ret:{Amazon:169,Newegg:179,'B&H':189,'Micro Center':null,'Best Buy':null,Walmart:null}},
-  {id:'os1',n:'Windows 11 Pro OEM',cat:'OS',mp:139,risk:'low',trend:'flat',ret:{Amazon:139,Newegg:139,'B&H':139,'Micro Center':139,'Best Buy':139,Walmart:139}},
+  {id:'rtx5090',n:'NVIDIA RTX 5090 32GB',cat:'GPU',mp:1999,risk:'critical',trend:'up 8%',
+    ret:{Amazon:2099,Newegg:1999,'B&H':2049,'Micro Center':1999,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/msi-rtx-5090-32g-gaming-trio-oc-geforce-rtx-5090-32gb-graphics-card/p/N82E16814137919',Amazon:'https://www.amazon.com/s?k=RTX+5090+32GB+graphics+card','B&H':'https://www.bhphotovideo.com/c/search?q=RTX+5090+32GB','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=RTX+5090'}},
+  {id:'rtx5080',n:'NVIDIA RTX 5080 16GB',cat:'GPU',mp:1199,risk:'high',trend:'up 5%',
+    ret:{Amazon:1249,Newegg:1199,'B&H':1219,'Micro Center':1199,'Best Buy':1299,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/msi-rtx-5080-16g-gaming-trio-oc-geforce-rtx-5080-16gb-graphics-card/p/N82E16814137910',Amazon:'https://www.amazon.com/s?k=RTX+5080+16GB+graphics+card','B&H':'https://www.bhphotovideo.com/c/search?q=RTX+5080+16GB','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=RTX+5080','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=RTX+5080+16GB'}},
+  {id:'rtx5070ti',n:'NVIDIA RTX 5070 Ti 16GB',cat:'GPU',mp:849,risk:'medium',trend:'flat',
+    ret:{Amazon:879,Newegg:849,'B&H':869,'Micro Center':849,'Best Buy':899,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/asus-tuf-gaming-tuf-rtx5070ti-o16g-gaming-geforce-rtx-5070-ti-16gb-graphics-card-triple-fans/p/N82E16814126754',Amazon:'https://www.amazon.com/s?k=RTX+5070+Ti+16GB+graphics+card','B&H':'https://www.bhphotovideo.com/c/search?q=RTX+5070+Ti+16GB','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=RTX+5070+Ti','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=RTX+5070+Ti+16GB'}},
+  {id:'rtx5070',n:'NVIDIA RTX 5070 12GB',cat:'GPU',mp:699,risk:'medium',trend:'down 2%',
+    ret:{Amazon:719,Newegg:699,'B&H':709,'Micro Center':699,'Best Buy':749,Walmart:699},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=RTX+5070+12GB+graphics+card',Amazon:'https://www.amazon.com/s?k=RTX+5070+12GB+graphics+card','B&H':'https://www.bhphotovideo.com/c/search?q=RTX+5070+12GB','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=RTX+5070','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=RTX+5070+12GB',Walmart:'https://www.walmart.com/search?q=RTX+5070+graphics+card'}},
+  {id:'rtx5060ti',n:'NVIDIA RTX 5060 Ti 16GB',cat:'GPU',mp:529,risk:'low',trend:'down 3%',
+    ret:{Amazon:539,Newegg:529,'B&H':534,'Micro Center':529,'Best Buy':549,Walmart:529},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=RTX+5060+Ti+16GB+graphics+card',Amazon:'https://www.amazon.com/s?k=RTX+5060+Ti+16GB+graphics+card','B&H':'https://www.bhphotovideo.com/c/search?q=RTX+5060+Ti+16GB','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=RTX+5060+Ti','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=RTX+5060+Ti+16GB',Walmart:'https://www.walmart.com/search?q=RTX+5060+Ti+graphics+card'}},
+  {id:'r9x3d',n:'AMD Ryzen 9 9950X3D',cat:'CPU',mp:699,risk:'medium',trend:'down 4%',
+    ret:{Amazon:699,Newegg:699,'B&H':699,'Micro Center':699,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/amd-ryzen-9-9000-series-ryzen-9-9950x3d-granite-ridge-socket-am5-desktop-cpu-processor/p/N82E16819113884',Amazon:'https://www.amazon.com/s?k=AMD+Ryzen+9+9950X3D','B&H':'https://www.bhphotovideo.com/c/search?q=AMD+Ryzen+9+9950X3D','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Ryzen+9+9950X3D'}},
+  {id:'r7x3d',n:'AMD Ryzen 7 9800X3D',cat:'CPU',mp:449,risk:'low',trend:'down 5%',
+    ret:{Amazon:449,Newegg:449,'B&H':449,'Micro Center':449,'Best Buy':449,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/amd-ryzen-7-9000-series-ryzen-7-9800x3d-granite-ridge-zen-5-socket-am5-desktop-cpu-processor/p/N82E16819113877',Amazon:'https://www.amazon.com/s?k=AMD+Ryzen+7+9800X3D','B&H':'https://www.bhphotovideo.com/c/search?q=AMD+Ryzen+7+9800X3D','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Ryzen+7+9800X3D','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=AMD+Ryzen+7+9800X3D'}},
+  {id:'r5',n:'AMD Ryzen 5 9600X',cat:'CPU',mp:229,risk:'low',trend:'flat',
+    ret:{Amazon:229,Newegg:219,'B&H':229,'Micro Center':219,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Ryzen+5+9600X+processor',Amazon:'https://www.amazon.com/s?k=AMD+Ryzen+5+9600X','B&H':'https://www.bhphotovideo.com/c/search?q=AMD+Ryzen+5+9600X','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Ryzen+5+9600X'}},
+  {id:'i9',n:'Intel Core Ultra 9 285K',cat:'CPU',mp:549,risk:'low',trend:'down 6%',
+    ret:{Amazon:519,Newegg:529,'B&H':539,'Micro Center':519,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Intel+Core+Ultra+9+285K',Amazon:'https://www.amazon.com/s?k=Intel+Core+Ultra+9+285K','B&H':'https://www.bhphotovideo.com/c/search?q=Intel+Core+Ultra+9+285K','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Core+Ultra+9+285K'}},
+  {id:'mb1',n:'ASUS ROG STRIX B650E-F (AM5)',cat:'Motherboard',mp:249,risk:'low',trend:'down 8%',
+    ret:{Amazon:229,Newegg:239,'B&H':249,'Micro Center':239,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=ASUS+ROG+STRIX+B650E-F',Amazon:'https://www.amazon.com/s?k=ASUS+ROG+STRIX+B650E-F+motherboard','B&H':'https://www.bhphotovideo.com/c/search?q=ASUS+ROG+STRIX+B650E','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=ASUS+B650E'}},
+  {id:'mb2',n:'ASUS ProArt Z890-Creator (LGA1851)',cat:'Motherboard',mp:349,risk:'low',trend:'flat',
+    ret:{Amazon:339,Newegg:349,'B&H':359,'Micro Center':349,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/asus-proart-z890-creator-wifi-atx-motherboard-intel-z890-lga-1851/p/N82E16813119699',Amazon:'https://www.amazon.com/s?k=ASUS+ProArt+Z890+Creator','B&H':'https://www.bhphotovideo.com/c/search?q=ASUS+ProArt+Z890+Creator','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=ASUS+ProArt+Z890'}},
+  {id:'mb3',n:'ASRock TRX50 WS (Threadripper)',cat:'Motherboard',mp:699,risk:'medium',trend:'flat',
+    ret:{Amazon:699,Newegg:699,'B&H':null,'Micro Center':null,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=ASRock+TRX50+WS',Amazon:'https://www.amazon.com/s?k=ASRock+TRX50+WS+motherboard'}},
+  {id:'ram1',n:'G.Skill Trident Z5 32GB DDR5-6000',cat:'RAM',mp:79,risk:'low',trend:'up 5%',
+    ret:{Amazon:79,Newegg:74,'B&H':79,'Micro Center':74,'Best Buy':null,Walmart:79},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=G.Skill+Trident+Z5+32GB+DDR5+6000',Amazon:'https://www.amazon.com/s?k=G.Skill+Trident+Z5+32GB+DDR5-6000','B&H':'https://www.bhphotovideo.com/c/search?q=G.Skill+Trident+Z5+32GB+DDR5+6000','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=G.Skill+Trident+Z5+32GB+DDR5',Walmart:'https://www.walmart.com/search?q=G.Skill+Trident+Z5+DDR5+6000'}},
+  {id:'ram2',n:'G.Skill Trident Z5 64GB DDR5-6000',cat:'RAM',mp:138,risk:'medium',trend:'up 10%',
+    ret:{Amazon:138,Newegg:129,'B&H':138,'Micro Center':132,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=G.Skill+Trident+Z5+64GB+DDR5+6000',Amazon:'https://www.amazon.com/s?k=G.Skill+Trident+Z5+64GB+DDR5-6000','B&H':'https://www.bhphotovideo.com/c/search?q=G.Skill+Trident+Z5+64GB+DDR5','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=G.Skill+64GB+DDR5+6000'}},
+  {id:'ram3',n:'Kingston Fury Beast 64GB DDR5-6000',cat:'RAM',mp:132,risk:'medium',trend:'up 8%',
+    ret:{Amazon:129,Newegg:132,'B&H':134,'Micro Center':129,'Best Buy':null,Walmart:129},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Kingston+Fury+Beast+64GB+DDR5+6000',Amazon:'https://www.amazon.com/s?k=Kingston+Fury+Beast+64GB+DDR5-6000','B&H':'https://www.bhphotovideo.com/c/search?q=Kingston+Fury+Beast+64GB+DDR5','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Kingston+Fury+Beast+64GB+DDR5',Walmart:'https://www.walmart.com/search?q=Kingston+Fury+Beast+DDR5+6000'}},
+  {id:'ssd1',n:'Samsung 990 Pro 2TB NVMe Gen4',cat:'Storage',mp:119,risk:'low',trend:'down 15%',
+    ret:{Amazon:99,Newegg:104,'B&H':109,'Micro Center':104,'Best Buy':119,Walmart:109},
+    links:{Newegg:'https://www.newegg.com/samsung-2tb-990-pro/p/N82E16820147861',Amazon:'https://www.amazon.com/s?k=Samsung+990+Pro+2TB+NVMe','B&H':'https://www.bhphotovideo.com/c/search?q=Samsung+990+Pro+2TB','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Samsung+990+Pro+2TB','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=Samsung+990+Pro+2TB',Walmart:'https://www.walmart.com/search?q=Samsung+990+Pro+2TB+NVMe'}},
+  {id:'ssd2',n:'WD Black SN850X 2TB NVMe Gen4',cat:'Storage',mp:109,risk:'low',trend:'down 12%',
+    ret:{Amazon:99,Newegg:104,'B&H':109,'Micro Center':99,'Best Buy':109,Walmart:99},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=WD+Black+SN850X+2TB',Amazon:'https://www.amazon.com/s?k=WD+Black+SN850X+2TB+NVMe','B&H':'https://www.bhphotovideo.com/c/search?q=WD+Black+SN850X+2TB','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=WD+SN850X+2TB','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=WD+Black+SN850X+2TB',Walmart:'https://www.walmart.com/search?q=WD+Black+SN850X+2TB'}},
+  {id:'cool1',n:'Arctic Liquid Freezer III 360 AIO',cat:'Cooling',mp:109,risk:'low',trend:'down 2%',
+    ret:{Amazon:89,Newegg:94,'B&H':99,'Micro Center':89,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/2VH-02M9-00004',Amazon:'https://www.amazon.com/s?k=Arctic+Liquid+Freezer+III+360','B&H':'https://www.bhphotovideo.com/c/search?q=Arctic+Liquid+Freezer+III+360','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Arctic+Liquid+Freezer+III+360'}},
+  {id:'cool2',n:'Arctic Liquid Freezer III 240 AIO',cat:'Cooling',mp:79,risk:'low',trend:'down 3%',
+    ret:{Amazon:64,Newegg:69,'B&H':72,'Micro Center':64,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Arctic+Liquid+Freezer+III+240',Amazon:'https://www.amazon.com/s?k=Arctic+Liquid+Freezer+III+240','B&H':'https://www.bhphotovideo.com/c/search?q=Arctic+Liquid+Freezer+III+240','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Arctic+Liquid+Freezer+240'}},
+  {id:'cool3',n:'Scythe Mugen 6 ARGB Air Cooler',cat:'Cooling',mp:59,risk:'low',trend:'flat',
+    ret:{Amazon:54,Newegg:56,'B&H':59,'Micro Center':null,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Scythe+Mugen+6+ARGB',Amazon:'https://www.amazon.com/s?k=Scythe+Mugen+6+ARGB','B&H':'https://www.bhphotovideo.com/c/search?q=Scythe+Mugen+6+ARGB'}},
+  {id:'psu1',n:'Corsair RM850x Platinum 850W',cat:'PSU',mp:129,risk:'low',trend:'down 8%',
+    ret:{Amazon:109,Newegg:119,'B&H':129,'Micro Center':119,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/corsair-rmx-series-atx-3-1-compatible-850-w-cybenetics-gold-power-supply-black-rm850x/p/N82E16817139333',Amazon:'https://www.amazon.com/s?k=Corsair+RM850x+power+supply','B&H':'https://www.bhphotovideo.com/c/search?q=Corsair+RM850x','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Corsair+RM850x'}},
+  {id:'psu2',n:'Corsair HX1200 Platinum 1200W',cat:'PSU',mp:219,risk:'low',trend:'down 3%',
+    ret:{Amazon:199,Newegg:209,'B&H':219,'Micro Center':204,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Corsair+HX1200+Platinum',Amazon:'https://www.amazon.com/s?k=Corsair+HX1200+Platinum+1200W','B&H':'https://www.bhphotovideo.com/c/search?q=Corsair+HX1200+Platinum','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Corsair+HX1200'}},
+  {id:'case1',n:'Fractal Design Define 7 ATX',cat:'Case',mp:169,risk:'low',trend:'flat',
+    ret:{Amazon:149,Newegg:159,'B&H':169,'Micro Center':159,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Fractal+Design+Define+7+ATX',Amazon:'https://www.amazon.com/s?k=Fractal+Design+Define+7+ATX','B&H':'https://www.bhphotovideo.com/c/search?q=Fractal+Design+Define+7','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Fractal+Design+Define+7'}},
+  {id:'case2',n:'Phanteks Eclipse P600S ATX',cat:'Case',mp:189,risk:'low',trend:'down 3%',
+    ret:{Amazon:169,Newegg:179,'B&H':189,'Micro Center':null,'Best Buy':null,Walmart:null},
+    links:{Newegg:'https://www.newegg.com/phanteks-atx-mid-tower-eclipse-p600s-steel-tempered-glass-computer-case-matte-white-ph-ec600pstg-dmw01/p/N82E16811854111',Amazon:'https://www.amazon.com/s?k=Phanteks+Eclipse+P600S','B&H':'https://www.bhphotovideo.com/c/search?q=Phanteks+Eclipse+P600S'}},
+  {id:'os1',n:'Windows 11 Pro OEM',cat:'OS',mp:139,risk:'low',trend:'flat',
+    ret:{Amazon:139,Newegg:139,'B&H':139,'Micro Center':139,'Best Buy':139,Walmart:139},
+    links:{Newegg:'https://www.newegg.com/p/pl?d=Windows+11+Pro+OEM',Amazon:'https://www.amazon.com/s?k=Windows+11+Pro+OEM+license','B&H':'https://www.bhphotovideo.com/c/search?q=Windows+11+Pro+OEM','Micro Center':'https://www.microcenter.com/search/search_results.aspx?N=4294967288&searchterm=Windows+11+Pro+OEM','Best Buy':'https://www.bestbuy.com/site/searchpage.jsp?st=Windows+11+Pro',Walmart:'https://www.walmart.com/search?q=Windows+11+Pro+OEM'}},
 ];
 const RC={critical:'#c0392b',high:'#d35400',medium:'#b7950b',low:'#27ae60'};
 
@@ -585,7 +635,7 @@ function rtrack(){
       <td><span class="rd r${x.risk}"></span><span style="font-size:12px;color:#555">${x.risk}</span></td>
       <td><button class="btn bg" style="padding:4px 10px;font-size:12px" onclick="s1('${x.id}')">Search</button></td>
     </tr>
-    <tr><td colspan="8" style="padding:0"><div class="es" id="ex-${x.id}"><div class="rr">${Object.entries(x.ret).map(([r,p])=>{if(!p)return`<div class="rc2"><div class="rn">${r}</div><div style="font-size:12px;color:#bbb">Not listed</div></div>`;const ib=p===best;return`<div class="rc2" style="${ib?'border-color:#27ae60;background:#f0faf4':''}"><div class="rn">${r}${ib?': best':''}</div><div class="rp${ib?' b':''}">$${p}</div><a href="https://www.google.com/search?q=${encodeURIComponent(r+' '+x.n)}" target="_blank" class="rl2">Search &rarr;</a></div>`;}).join('')}</div></div></td></tr>`;
+    <tr><td colspan="8" style="padding:0"><div class="es" id="ex-${x.id}"><div class="rr">${Object.entries(x.ret).map(([r,p])=>{if(!p)return`<div class="rc2"><div class="rn">${r}</div><div style="font-size:12px;color:#bbb">Not listed</div></div>`;const ib=p===best;return`<div class="rc2" style="${ib?'border-color:#27ae60;background:#f0faf4':''}"><div class="rn">${r}${ib?': best':''}</div><div class="rp${ib?' b':''}">$${p}</div><a href="${x.links?.[r]||'https://www.google.com/search?q='+encodeURIComponent(r+' '+x.n)}" target="_blank" class="rl2">View &rarr;</a></div>`;}).join('')}</div></div></td></tr>`;
   }).join('');
 }
 
@@ -859,14 +909,20 @@ function renderMD(text,targetId){
   el.className='ob rendered';
 }
 
+function refreshPrices(){
+  trackerSearched=false;
+  rtrack();
+  renderPrebuilts();
+  rlog();
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
-  // load any saved standard price overrides
   const overrides=JSON.parse(localStorage.getItem('sd2_std')||'{}');
   Object.entries(overrides).forEach(([id,p])=>{const c=COMPS.find(x=>x.id===id);if(c)c.mp=p;});
-  rtrack();ilog();renderPrebuilts();
-  // populate std price selector
   const sel=document.getElementById('sp-comp');
   if(sel)sel.innerHTML='<option value="">Select component to update standard price...</option>'+COMPS.map(c=>`<option value="${c.id}">${c.n} (current std: $${c.mp})</option>`).join('');
+  ilog();
+  refreshPrices();
 });
 </script>
 </body>
