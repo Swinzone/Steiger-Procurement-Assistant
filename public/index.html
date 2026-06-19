@@ -190,7 +190,7 @@ textarea{resize:vertical}
     <table class="pt">
       <thead><tr>
         <th style="padding-left:16px">Component</th><th>Category</th><th>Std price</th>
-        <th>Live price</th><th>Trend</th><th>Risk</th><th>Newegg</th><th>AI search</th>
+        <th>Live price</th><th>Trend</th><th>Risk</th><th>AI search</th>
       </tr></thead>
       <tbody id="tb"></tbody>
     </table>
@@ -621,14 +621,13 @@ function rtrack(){
   const c=document.getElementById('tc')?.value||'';
   const f=COMPS.filter(x=>(!c||x.cat===c)&&(!s||x.n.toLowerCase().includes(s)));
   const tb=document.getElementById('tb');
-  if(!f.length){tb.innerHTML='<tr><td colspan="8" class="ne">No components match.</td></tr>';return;}
+  if(!f.length){tb.innerHTML='<tr><td colspan="7" class="ne">No components match.</td></tr>';return;}
   tb.innerHTML=f.map(x=>{
     const pr=Object.values(x.ret).filter(p=>p!==null);
     const best=Math.min(...pr);
     const br=Object.entries(x.ret).find(([k,v])=>v===best)?.[0]||'';
     const sv=x.mp-best;
     const tc=x.trend.startsWith('up')?'#c0392b':x.trend.startsWith('down')?'#1a7a3e':'#888';
-    const neweggUrl=x.links?.Newegg||'';
     return`<tr>
       <td style="padding-left:16px"><div style="font-weight:500;font-size:13px">${x.n}</div><button class="eb" onclick="tex('${x.id}')">show retailers</button></td>
       <td><span class="cp">${x.cat}</span></td>
@@ -636,10 +635,9 @@ function rtrack(){
       <td id="live-${x.id}" style="font-size:13px;color:#aaa">—</td>
       <td style="color:${tc};font-size:12px">${x.trend}</td>
       <td><span class="rd r${x.risk}"></span><span style="font-size:12px;color:#555">${x.risk}</span></td>
-      <td>${neweggUrl?`<a href="${neweggUrl}" target="_blank" class="btn bg" style="padding:4px 12px;font-size:12px;text-decoration:none;display:inline-block">Newegg &rarr;</a>`:'—'}</td>
       <td><button class="btn bg" style="padding:4px 10px;font-size:12px" onclick="s1('${x.id}')">AI search</button></td>
     </tr>
-    <tr><td colspan="8" style="padding:0"><div class="es" id="ex-${x.id}"><div class="rr">${Object.entries(x.ret).map(([r,p])=>{if(!p)return`<div class="rc2"><div class="rn">${r}</div><div style="font-size:12px;color:#bbb">Not listed</div></div>`;const ib=p===best;return`<div class="rc2" style="${ib?'border-color:#27ae60;background:#f0faf4':''}"><div class="rn">${r}${ib?': best':''}</div><div class="rp${ib?' b':''}">$${p}</div><a href="${x.links?.[r]||'https://www.google.com/search?q='+encodeURIComponent(r+' '+x.n)}" target="_blank" class="rl2">View &rarr;</a></div>`;}).join('')}</div></div></td></tr>`;
+    <tr><td colspan="7" style="padding:0"><div class="es" id="ex-${x.id}"><div class="rr">${Object.entries(x.ret).map(([r,p])=>{if(!p)return`<div class="rc2"><div class="rn">${r}</div><div style="font-size:12px;color:#bbb">Not listed</div></div>`;const ib=p===best;return`<div class="rc2" style="${ib?'border-color:#27ae60;background:#f0faf4':''}"><div class="rn">${r}</div><div class="rp" style="font-size:11px;color:#aaa">est. ~$${p}</div><a href="${x.links?.[r]||'https://www.google.com/search?q='+encodeURIComponent(r+' '+x.n)}" target="_blank" class="rl2">View live &rarr;</a></div>`;}).join('')}</div></div></td></tr>`;
   }).join('');
 }
 
@@ -932,12 +930,13 @@ async function loadLivePrices(){
       const comp=COMPS.find(c=>c.id===id);
       const std=comp?comp.mp:null;
       const formatted='$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+      const src='<span style="font-size:10px;color:#aaa;margin-left:4px">(Newegg)</span>';
       if(std&&price<std){
-        el.innerHTML=`<span style="color:#1a7a3e;font-weight:600">${formatted}</span><span style="font-size:10px;color:#1a7a3e;margin-left:5px">Save $${(std-price).toFixed(0)}</span>`;
+        el.innerHTML=`<span style="color:#1a7a3e;font-weight:600">${formatted}</span><span style="font-size:10px;color:#1a7a3e;margin-left:5px">Save $${(std-price).toFixed(0)}</span>${src}`;
       }else if(std&&price>std*1.05){
-        el.innerHTML=`<span style="color:#c0392b;font-weight:600">${formatted}</span><span style="font-size:10px;color:#c0392b;margin-left:5px">+$${(price-std).toFixed(0)}</span>`;
+        el.innerHTML=`<span style="color:#c0392b;font-weight:600">${formatted}</span><span style="font-size:10px;color:#c0392b;margin-left:5px">+$${(price-std).toFixed(0)}</span>${src}`;
       }else{
-        el.innerHTML=`<span style="font-weight:500">${formatted}</span>`;
+        el.innerHTML=`<span style="font-weight:500">${formatted}</span>${src}`;
       }
     });
     Object.keys(data.errors||{}).forEach(id=>{
