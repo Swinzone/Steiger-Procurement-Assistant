@@ -182,13 +182,15 @@ textarea{resize:vertical}
         <option>PSU</option><option>Case</option>
       </select>
       <button class="btn bp" id="sab" onclick="sall()">Search all prices with AI</button>
+      <button class="btn bg" onclick="livePricesLoaded=false;loadLivePrices()" style="font-size:12px;padding:6px 12px">Refresh prices</button>
       <span id="tsp" style="display:none;font-size:12px;color:#888">Searching...</span>
     </div>
     <div id="auto-note" style="display:none;font-size:12px;color:#1a7a3e;padding:8px 16px;background:#f0faf4;border-bottom:1px solid #d8e8d4">Searching live prices on load...</div>
+    <div id="price-fetch-note" style="display:none;font-size:11px;color:#888;padding:8px 16px;border-bottom:1px solid #e8e8e4;background:#f9f9f8"></div>
     <table class="pt">
       <thead><tr>
-        <th style="padding-left:16px">Component</th><th>Category</th><th>My price</th>
-        <th>Market low</th><th>Savings</th><th>Trend</th><th>Risk</th><th></th>
+        <th style="padding-left:16px">Component</th><th>Category</th><th>Std price</th>
+        <th>Live price</th><th>Trend</th><th>Risk</th><th>Newegg</th><th>AI search</th>
       </tr></thead>
       <tbody id="tb"></tbody>
     </table>
@@ -594,6 +596,7 @@ function go(id){
   const i=TABS.indexOf(id);
   document.querySelectorAll('.tab')[i]?.classList.add('on');
   if(id==='track'&&!trackerSearched){trackerSearched=true;autoSearch();}
+  if(id==='track')loadLivePrices();
 }
 
 async function autoSearch(){
@@ -625,15 +628,16 @@ function rtrack(){
     const br=Object.entries(x.ret).find(([k,v])=>v===best)?.[0]||'';
     const sv=x.mp-best;
     const tc=x.trend.startsWith('up')?'#c0392b':x.trend.startsWith('down')?'#1a7a3e':'#888';
+    const neweggUrl=x.links?.Newegg||'';
     return`<tr>
       <td style="padding-left:16px"><div style="font-weight:500;font-size:13px">${x.n}</div><button class="eb" onclick="tex('${x.id}')">show retailers</button></td>
       <td><span class="cp">${x.cat}</span></td>
       <td>$${x.mp}</td>
-      <td class="bp2">$${best} <span style="font-size:11px;color:#888;font-weight:400">(${br})</span></td>
-      <td>${sv>0?`<span class="st">Save $${sv}</span>`:'<span style="color:#aaa;font-size:12px">At market</span>'}</td>
+      <td id="live-${x.id}" style="font-size:13px;color:#aaa">—</td>
       <td style="color:${tc};font-size:12px">${x.trend}</td>
       <td><span class="rd r${x.risk}"></span><span style="font-size:12px;color:#555">${x.risk}</span></td>
-      <td><button class="btn bg" style="padding:4px 10px;font-size:12px" onclick="s1('${x.id}')">Search</button></td>
+      <td>${neweggUrl?`<a href="${neweggUrl}" target="_blank" class="btn bg" style="padding:4px 12px;font-size:12px;text-decoration:none;display:inline-block">Newegg &rarr;</a>`:'—'}</td>
+      <td><button class="btn bg" style="padding:4px 10px;font-size:12px" onclick="s1('${x.id}')">AI search</button></td>
     </tr>
     <tr><td colspan="8" style="padding:0"><div class="es" id="ex-${x.id}"><div class="rr">${Object.entries(x.ret).map(([r,p])=>{if(!p)return`<div class="rc2"><div class="rn">${r}</div><div style="font-size:12px;color:#bbb">Not listed</div></div>`;const ib=p===best;return`<div class="rc2" style="${ib?'border-color:#27ae60;background:#f0faf4':''}"><div class="rn">${r}${ib?': best':''}</div><div class="rp${ib?' b':''}">$${p}</div><a href="${x.links?.[r]||'https://www.google.com/search?q='+encodeURIComponent(r+' '+x.n)}" target="_blank" class="rl2">View &rarr;</a></div>`;}).join('')}</div></div></td></tr>`;
   }).join('');
@@ -909,8 +913,54 @@ function renderMD(text,targetId){
   el.className='ob rendered';
 }
 
+let livePricesLoaded=false;
+
+async function loadLivePrices(){
+  if(livePricesLoaded)return;
+  livePricesLoaded=true;
+  document.querySelectorAll('[id^="live-"]').forEach(el=>{
+    el.textContent='Loading...';
+    el.style.color='#aaa';
+  });
+  try{
+    const res=await fetch('/api/prices');
+    if(!res.ok)throw new Error('API error '+res.status);
+    const data=await res.json();
+    Object.entries(data.prices).forEach(([id,price])=>{
+      const el=document.getElementById('live-'+id);
+      if(!el)return;
+      const comp=COMPS.find(c=>c.id===id);
+      const std=comp?comp.mp:null;
+      const formatted='$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+      if(std&&price<std){
+        el.innerHTML=`<span style="color:#1a7a3e;font-weight:600">${formatted}</span><span style="font-size:10px;color:#1a7a3e;margin-left:5px">Save $${(std-price).toFixed(0)}</span>`;
+      }else if(std&&price>std*1.05){
+        el.innerHTML=`<span style="color:#c0392b;font-weight:600">${formatted}</span><span style="font-size:10px;color:#c0392b;margin-left:5px">+$${(price-std).toFixed(0)}</span>`;
+      }else{
+        el.innerHTML=`<span style="font-weight:500">${formatted}</span>`;
+      }
+    });
+    Object.keys(data.errors||{}).forEach(id=>{
+      const el=document.getElementById('live-'+id);
+      if(el)el.innerHTML='<a href="#" onclick="s1(\''+id+'\');return false" style="font-size:11px;color:#2878c8">AI search</a>';
+    });
+    const note=document.getElementById('price-fetch-note');
+    if(note){
+      const t=new Date(data.fetchedAt);
+      note.textContent=`Live Newegg prices fetched at ${t.toLocaleTimeString()}. ${data.count} of ${COMPS.length} components fetched.`;
+      note.style.display='block';
+    }
+  }catch(err){
+    document.querySelectorAll('[id^="live-"]').forEach(el=>{
+      el.innerHTML='<span style="font-size:11px;color:#aaa">unavailable</span>';
+    });
+    console.error('Live price fetch failed:',err);
+  }
+}
+
 function refreshPrices(){
   trackerSearched=false;
+  livePricesLoaded=false;
   rtrack();
   renderPrebuilts();
   rlog();
