@@ -163,10 +163,10 @@ textarea{resize:vertical}
   <div class="as ag"><div class="at">NVMe Gen4 SSDs spot buy opportunity</div><div class="ad">Samsung 990 Pro 2TB at $89-99 vs $119 standard. Category oversupplied. Buy 45-60 day buffer now.</div></div>
   <hr class="div">
   <div class="lbl">Steiger prebuilt systems</div>
-  <div style="font-size:12px;color:#666;margin-bottom:10px">Sell price is what Steiger charges. Component cost is the estimated total to source the parts at best available prices (June 2026 estimates). Click any system to see the component breakdown.</div>
+  <div style="font-size:12px;color:#666;margin-bottom:10px">Click any system to see the parts list with direct retailer links.</div>
   <div class="card" style="padding:0;overflow:hidden">
     <table class="pt">
-      <thead><tr><th style="padding-left:16px">System</th><th>Configuration</th><th>Sell price</th><th>Est. component cost</th><th></th></tr></thead>
+      <thead><tr><th style="padding-left:16px">System</th><th>Configuration</th><th></th></tr></thead>
       <tbody id="prebuilt-tbody"></tbody>
     </table>
   </div>
@@ -527,28 +527,29 @@ function renderPrebuilts(){
   const tb=document.getElementById('prebuilt-tbody');
   if(!tb)return;
   tb.innerHTML=PREBUILTS.map((p,i)=>{
-    const cost=p.parts.reduce((s,x)=>s+x[2],0);
     return `<tr style="cursor:pointer" onclick="pbToggle(${i})">
       <td style="padding-left:16px;font-weight:500">${p.name}</td>
       <td>${p.config}</td>
-      <td>$${p.sell.toLocaleString()}</td>
-      <td class="bp2">$${cost.toLocaleString()}</td>
       <td><button class="eb">show parts</button></td>
     </tr>
-    <tr><td colspan="5" style="padding:0">
+    <tr><td colspan="3" style="padding:0">
       <div class="es" id="pb-${i}">
         <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px">
-          ${p.parts.map(x=>`<tr>
-            <td style="padding:5px 8px;color:#888;width:90px">${x[0]}</td>
-            <td style="padding:5px 8px">${x[1]}</td>
-            <td style="padding:5px 8px;text-align:right;font-weight:500">$${x[2].toLocaleString()}</td>
-          </tr>`).join('')}
-          <tr style="border-top:1px solid #d8d8d4">
-            <td style="padding:6px 8px;font-weight:500" colspan="2">Estimated component cost (best prices)</td>
-            <td style="padding:6px 8px;text-align:right;font-weight:600;color:#1a7a3e">$${cost.toLocaleString()}</td>
-          </tr>
+          ${p.parts.map(x=>{
+            const q=encodeURIComponent(x[1]);
+            const ls=[
+              ['PCPartPicker',`https://pcpartpicker.com/search/#q=${q}`],
+              ['Newegg',`https://www.newegg.com/p/pl?d=${q}`],
+              ['Amazon',`https://www.amazon.com/s?k=${q}`],
+              ['B&H',`https://www.bhphotovideo.com/c/search?q=${q}`],
+            ];
+            return `<tr>
+              <td style="padding:6px 8px;color:#888;width:90px">${x[0]}</td>
+              <td style="padding:6px 8px;font-weight:500">${x[1]}</td>
+              <td style="padding:6px 8px">${ls.map(([n,u])=>`<a href="${u}" target="_blank" class="lp">${n}</a>`).join('')}</td>
+            </tr>`;
+          }).join('')}
         </table>
-        <div style="font-size:11px;color:#999;padding:0 8px 4px">Estimated at best available component prices, June 2026. Use the Price Tracker or AI Assistant to confirm current live pricing before purchasing.</div>
       </div>
     </td></tr>`;
   }).join('');
