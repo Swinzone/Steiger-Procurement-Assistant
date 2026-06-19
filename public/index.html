@@ -151,8 +151,6 @@ textarea{resize:vertical}
 <div id="p-dash" class="pnl on">
   <div class="sr">
     <div class="sb"><div class="sv">25</div><div class="sl">Components tracked</div></div>
-    <div class="sb"><div class="sv" style="color:#c0392b">3</div><div class="sl">Critical supply risks</div></div>
-    <div class="sb"><div class="sv" style="color:#1a7a3e">4</div><div class="sl">Negotiation windows open</div></div>
     <div class="sb"><div class="sv" id="d-sav">$0</div><div class="sl">Savings logged this month</div></div>
   </div>
   <div class="lbl">Active alerts</div>
@@ -186,7 +184,7 @@ textarea{resize:vertical}
     </div>
     <table class="pt">
       <thead><tr>
-        <th style="padding-left:16px">Component</th><th>Category</th><th>Risk</th><th>Trend</th><th>Retailers</th>
+        <th style="padding-left:16px">Component</th><th>Category</th><th>Retailers</th>
       </tr></thead>
       <tbody id="tb"></tbody>
     </table>
@@ -538,7 +536,6 @@ function renderPrebuilts(){
           ${p.parts.map(x=>{
             const q=encodeURIComponent(x[1]);
             const ls=[
-              ['PCPartPicker',`https://pcpartpicker.com/search/#q=${q}`],
               ['Newegg',`https://www.newegg.com/p/pl?d=${q}`],
               ['Amazon',`https://www.amazon.com/s?k=${q}`],
               ['B&H',`https://www.bhphotovideo.com/c/search?q=${q}`],
@@ -615,12 +612,9 @@ function rtrack(){
   const c=document.getElementById('tc')?.value||'';
   const f=COMPS.filter(x=>(!c||x.cat===c)&&(!s||x.n.toLowerCase().includes(s)));
   const tb=document.getElementById('tb');
-  if(!f.length){tb.innerHTML='<tr><td colspan="5" class="ne">No components match.</td></tr>';return;}
+  if(!f.length){tb.innerHTML='<tr><td colspan="3" class="ne">No components match.</td></tr>';return;}
   tb.innerHTML=f.map(x=>{
-    const tc=x.trend.startsWith('up')?'#c0392b':x.trend.startsWith('down')?'#1a7a3e':'#888';
-    const pcpp=`https://pcpartpicker.com/search/#q=${encodeURIComponent(x.n)}`;
     const retailLinks=[
-      ['PCPartPicker',pcpp],
       ['Newegg',x.links?.Newegg||`https://www.newegg.com/p/pl?d=${encodeURIComponent(x.n)}`],
       ['Amazon',x.links?.Amazon||`https://www.amazon.com/s?k=${encodeURIComponent(x.n)}`],
       ['B&H',x.links?.['B&H']||`https://www.bhphotovideo.com/c/search?q=${encodeURIComponent(x.n)}`],
@@ -631,8 +625,6 @@ function rtrack(){
     return`<tr>
       <td style="padding-left:16px;font-weight:500;font-size:13px">${x.n}</td>
       <td><span class="cp">${x.cat}</span></td>
-      <td><span class="rd r${x.risk}"></span><span style="font-size:12px;color:#555">${x.risk}</span></td>
-      <td style="color:${tc};font-size:12px">${x.trend}</td>
       <td style="padding:8px 12px 8px 0">${retailLinks.map(([n,u])=>`<a href="${u}" target="_blank" class="lp">${n}</a>`).join('')}</td>
     </tr>`;
   }).join('');
